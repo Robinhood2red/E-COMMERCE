@@ -9,12 +9,26 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>Hello ! ✅</h1> {#{ controller_name }#}
+    {# <h1>Hello {{ controller_name }} ! ✅</h1>  #}
 
-    This friendly message is coming from:
+    {# <ul>
+    {% for leNom in lesNoms %}
+    <li> {{ leNom|upper }} </li>
+    {% endfor %}
+    {% if age > 18 %}
+        Vous êtes majeur
+    {% else %}
+        Vous êtes mineur
+    {% endif %}
+    </ul> #}
+
+    {# This friendly message is coming from:
     <ul>
         <li>Your controller at <code>C:/wamp64/www/E-COM/E-COMMERCE/src/Controller/HomePageController.php</code></li>
         <li>Your template at <code>C:/wamp64/www/E-COM/E-COMMERCE/templates/home_page/index.html.twig</code></li>
-    </ul>
+    </ul> #}
+
+
+    
 </div>
 {% endblock %}
