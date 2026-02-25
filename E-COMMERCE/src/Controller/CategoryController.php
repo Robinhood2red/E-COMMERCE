@@ -38,4 +38,6 @@ final class CategoryController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
+    // #[Route('/category/update{update}', name: 'app_category_update')]
+    // public function 
 }
