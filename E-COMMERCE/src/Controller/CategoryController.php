@@ -38,6 +38,19 @@ final class CategoryController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    // #[Route('/category/update{update}', name: 'app_category_update')]
-    // public function 
+    #[Route('/category/update/{id}', name: 'app_category_update')]
+    public function editCategory(Categorie $category, Request $request, EntityManagerInterface $up): Response
+    {
+        $form = $this->createForm(CategoryFormType::class, $category);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $up->flush();
+            return $this->redirectToRoute('app_category');
+        }
+
+        return $this->render('category/updateCategory.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
 }
