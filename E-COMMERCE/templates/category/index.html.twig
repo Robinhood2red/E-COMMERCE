@@ -1,11 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello CategoryController!{% endblock %}
+{% block title %}Liste des catégories{% endblock %}
 
 {% block body %}
+
+    {% include 'layouts/_flash_message.html.twig' %}
+
     <table class="table">
         <tr>
-            <th>Nom de la categorie</th>
+            <th>Nom de la catégorie</th>
             <th>Action</th>
         </tr>
         {% for category in categories %}
@@ -15,7 +18,7 @@
                 </td>
                 <td>
                     <a href="{{ path('app_category_update', {'id':category.id}) }}" class="btn btn-outline-primary">Modifier</a>
-                    <a href="{{ path('app_category_delete', {'id':category.id}) }}" class="btn btn-danger">Supprimer</a>
+                    <a onclick="return confirm('Voulez vous vraiment supprimer cette catégorie ?')" href="{{ path('app_category_delete', {'id':category.id}) }}" class="btn btn-danger">Supprimer</a>
                 </td>
             </tr>
         {% else %}
