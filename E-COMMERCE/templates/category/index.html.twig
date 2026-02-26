@@ -20,9 +20,9 @@
             </tr>
         {% else %}
         <p>Aucune catégorie à afficher</p>
+        {% endfor %}
     </table>
-    {# <a href="{{ path('app_category_new', ) }}" class="btn btn-success">Ajoutez une catégorie</a> #}
-{% endfor %}
+        <a href="{{ path('app_category_new' ) }}" class="btn btn-success">Ajoutez une catégorie</a>
 {% endblock %}
 {# /* <style>
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
