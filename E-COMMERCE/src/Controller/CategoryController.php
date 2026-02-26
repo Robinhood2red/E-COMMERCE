@@ -39,17 +39,21 @@ final class CategoryController extends AbstractController
         ]);
     }
     #[Route('/category/update/{id}', name: 'app_category_update')]
-    public function editCategory(Categorie $category, Request $request, EntityManagerInterface $up): Response
-    {
+    public function editCategory(Categorie $category, EntityManagerInterface $up, Request $request): Response
+    { // Categorie $category POUR aller chercher la class categorie dont l'id est {n°}, $category correspond à l'objet complet
+    // Pas une nouvelle instanciation (au sens new Categorie()), c'est une récupération
+
+    // Request = info validées par l'utilisateur (voix de l'utilisateur) / $request = contenu de toutes les infos envoyées par l'utilisateur 
+        
         $form = $this->createForm(CategoryFormType::class, $category);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $up->flush();
-            return $this->redirectToRoute('app_category');
+            return $this->redirectToRoute('app_category'); // Change de page pour retourner à app_category (les updates se font 1 par 1)
         }
 
-        return $this->render('category/updateCategory.html.twig', [
+        return $this->render('category/updateCategory.html.twig', [ // affiche le formulaire
             'form' => $form->createView(),
         ]);
     }

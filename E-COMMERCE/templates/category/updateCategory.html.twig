@@ -3,13 +3,13 @@
 {% block body %}
     <div class="container">
         <div class="form">
-            {# Ici on utilise 'category' car c'est le nom dans ton contrôleur #}
+            
             <h2>Modifier la catégorie :</h2>
             
             {{ form_start(form) }}
                 {{ form_row(form.name, {'attr':{'class':'form form-control'}}) }}
-                
                 <input type="submit" value="Mettre à jour" class="btn btn-success mt-4">
+                {# Ici 'category' (pas categorie) nom dans le contrôleur #}
                 <a href="{{ path('app_category') }}" class="btn btn-secondary mt-4">Annuler</a>
             {{ form_end(form) }}
         </div>
