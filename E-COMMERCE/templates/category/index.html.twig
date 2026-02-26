@@ -3,7 +3,28 @@
 {% block title %}Hello CategoryController!{% endblock %}
 
 {% block body %}
-<style>
+    <table class="table">
+        <tr>
+            <th>Nom de la categorie</th>
+            <th>Action</th>
+        </tr>
+        {% for category in categories %}
+            <tr>
+                <td>
+                    {{ category.name }}
+                </td>
+                <td>
+                    <a href="{{ path('app_category_update', {'id':category.id}) }}" class="btn btn-outline-primary">Modifier</a>
+                    <a href="{{ path('app_category_delete', {'id':category.id}) }}" class="btn btn-danger">Supprimer</a>
+                </td>
+            </tr>
+        {% else %}
+        <p>Aucune catégorie à afficher</p>
+    </table>
+    {# <a href="{{ path('app_category_new', ) }}" class="btn btn-success">Ajoutez une catégorie</a> #}
+{% endfor %}
+{% endblock %}
+{# /* <style>
     .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
     .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
 </style>
@@ -17,4 +38,4 @@
         <li>Your template at <code>E:/wamp64/www/E-COMMERCE/E-COMMERCE/templates/category/index.html.twig</code></li>
     </ul>
 </div>
-{% endblock %}
+{% endblock %} */ #}

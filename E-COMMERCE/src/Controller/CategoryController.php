@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Categorie;
 use App\Form\CategoryFormType;
+use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Dom\Entity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,10 +15,13 @@ use Symfony\Component\Routing\Attribute\Route;
 final class CategoryController extends AbstractController
 {
     #[Route('/category', name: 'app_category')]
-    public function index(): Response
+    public function index(CategorieRepository $repo, ): Response
     {
+
+        $categories = $repo->findAll();
+
         return $this->render('category/index.html.twig', [
-            'controller_name' => 'CategoryController',
+            'categories' => $categories,
         ]);
     }
 
@@ -56,5 +60,14 @@ final class CategoryController extends AbstractController
         return $this->render('category/updateCategory.html.twig', [ // affiche le formulaire
             'form' => $form->createView(),
         ]);
+    }
+    #[Route('/category/delete{id}', name: 'app_category_delete')]
+    public function deleteCategory(Categorie $category, EntityManagerInterface $entityManager): Response
+    {
+
+            $entityManager->remove($category);
+            $entityManager->flush();
+
+        return $this->redirectToRoute('app_category');
     }
 }
