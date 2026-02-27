@@ -3,18 +3,42 @@
 {% block title %}Hello UserController!{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
 
-<div class="example-wrapper">
-    <h1>Hello ! ✅</h1>
+    <div class="container">
+    {% include 'layouts/_flash_message.html.twig' %}
+        <table class="table">
+            <tr>
+                <th>id</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Email</th>
+                <th>Rôle</th>
+                <th>Action</th>
+            </tr>
+        
+            {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.lastname }}</td>
+                    <td>{{ user.firstname }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>
+                        {% if ("ROLE_ADMIN" in user.roles) %}
+                            <span class="test-primary">Administrateur</span>
+                        {% elseif ("ROLE_EDITOR" in user.roles) %}
+                            <span class="test-succes">Administrateur</span>
+                        {% else %}
+                            <span class="test-secondary">Client</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a onclick="return confirm('Voulez-vous vraiment effecter ce rôle à cet utilisateur ?')" href="{{ path('app_user_to_editor', {'id':user.id}) }}" class="btn btn-outline-primary">Ajoutez le rôle éditeur</a>
+                        <a onclick="return confirm('Voulez vous vraiment supprimer cet utilisateur ?')" {#href="{{ path('app_category_delete', {'id':category.id}) }}"#} class="btn btn-danger">Supprimer</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    </div>
+            
 
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>C:/wamp64/www/E-COM/E-COMMERCE/src/Controller/UserController.php</code></li>
-        <li>Your template at <code>C:/wamp64/www/E-COM/E-COMMERCE/templates/user/index.html.twig</code></li>
-    </ul>
-</div>
 {% endblock %}

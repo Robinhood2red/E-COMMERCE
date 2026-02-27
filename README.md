@@ -11,3 +11,5 @@ CRéE ENTITY
 php bin/console make:entity 'name'
 
 php -S localhost:8000 -t public
+
+https://www.udemy.com/course/python-pour-la-data-le-cours-ultime/
