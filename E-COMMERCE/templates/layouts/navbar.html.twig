@@ -34,12 +34,20 @@
           </ul>
         </li>
         {% endif %}
-        <li class="nav-item">
-          <a class="nav-link" href="{{ path('app_register') }}">S'inscrire</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
-        </li>
+
+        {% if app.user %} {#-- SI connecté ALORS se déconnester AUTREMENT s'inscrire / se connecter --#}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_logout') }}">Déconnexion ({{ app.user.userIdentifier }})</a>
+            </li>
+        {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_register') }}">S'inscrire</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{{ path('app_login') }}">Se connecter</a>
+            </li>
+        {% endif %}
+
       </ul>
       <form class="d-flex" role="search">
         <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>

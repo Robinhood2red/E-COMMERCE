@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Categorie;
-use App\Entity\User;
 use App\Form\CategoryFormType;
 use App\Repository\CategorieRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -66,7 +65,7 @@ final class CategoryController extends AbstractController
             'form' => $form->createView(),
         ]);
     }
-    #[Route('/admin/category/delete{id}', name: 'app_category_delete')]
+    #[Route('/admin/category/delete{id}', name: 'app_category_delete')] //! CATEGORY DELETE
     public function deleteCategory(Categorie $category, EntityManagerInterface $entityManager): Response
     {
             $entityManager->remove($category);
@@ -77,13 +76,4 @@ final class CategoryController extends AbstractController
         return $this->redirectToRoute('app_category');
     }
 
-    #[Route('/admin/user/{id}/to/editor', name: 'app_user_to_editor')]
-    public function changeRole(User $user, EntityManagerInterface $entityManager): Response
-    {
-            $user->setRoles(['ROLE_EDITOR', 'ROLE_USER']);
-            $entityManager->flush();
-
-        $this->addFlash('succes', "Le rôle éditeur à bien été ajouté à l'utilisateur"); 
-        return $this->redirectToRoute('app_category');
-    }
 }
