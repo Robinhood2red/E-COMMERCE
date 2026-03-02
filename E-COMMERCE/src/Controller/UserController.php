@@ -20,13 +20,28 @@ final class UserController extends AbstractController
             'users' => $users,
         ]);
     }
-    #[Route('/admin/user/{id}/to/editor', name: 'app_user_to_editor')] //! USER TO EDITOR
-    public function changeRole(User $user, EntityManagerInterface $entityManager): Response
+    #[Route('/admin/user/{id}/change-role/{role}', name: 'app_user_to_editor')]
+    public function changeRole(EntityManagerInterface $entityManager, User $user, $role): Response
     {
-            $user->setRoles(['ROLE_EDITOR', 'ROLE_USER']);
-            $entityManager->flush();
+        // Ici les roles 
+        $validRoles = ['ROLE_EDITOR', 'ROLE_USER'];
 
-        $this->addFlash('success', "Le rôle éditeur à bien été ajouté à l'utilisateur"); 
+        // Ici on vérifie si ROLE_EDITOR est bien présent dans notre tableau
+        if (!in_array($role, $validRoles, true)) {
+            $this->addFlash('error', "Le rôle demandé n'est pas valide.");
+            return $this->redirectToRoute('app_user');
+        }
+
+        if ($role !== 'ROLE_USER') {
+            $user->setRoles([$role, 'ROLE_USER']);
+        } else {
+            $user->setRoles([$role]);
+        }
+        // Sauvegarde en base de données
+        $entityManager->flush();
+        // Message de confirmation
+        $this->addFlash('success', "Le rôle $role a bien été attribué à l'utilisateur.");
+        // Redirection vers la liste des utilisateurs
         return $this->redirectToRoute('app_user');
     }
 
@@ -40,7 +55,7 @@ final class UserController extends AbstractController
         return $this->redirectToRoute('app_user');
     }
 
-    #[Route('/admin/user/{id}/delete', name: 'app_user_delete')] //! DELETE EDITEUR
+    #[Route('/admin/user/{id}/delete', name: 'app_user_delete')] //! DELETE USER
     public function deleteUser(User $user, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($user);

@@ -33,8 +33,8 @@
                     </td>
                     <td>
                     {% if ('ROLE_ADMIN' in user.roles) == false %} {#--------UNIQUEMENT SI PAS ADMIN--------#}
-                        {% if ('ROLE_EDITOR' in user.roles) == false %} {#--------UNIQUEMENT SI PAS EDITOR--------#}
-                            <a onclick="return confirm('Voulez-vous vraiment effecter ce rôle à cet utilisateur ?')" href="{{ path('app_user_to_editor', {'id':user.id}) }}" class="btn btn-outline-primary">Ajoutez le rôle éditeur</a>
+                        {% if ('ROLE_EDITOR' in user.roles) == false %} {#--------UNIQUEMENT SI PAS EDITOR--------#}                                    {#--------POUR VéRIFIER SI EDITOR--------#}
+                            <a onclick="return confirm('Voulez-vous vraiment effecter ce rôle à cet utilisateur ?')" href="{{ path('app_user_to_editor', {'id':user.id, 'role': 'ROLE_EDITOR'}) }}" class="btn btn-outline-primary">Ajoutez le rôle éditeur</a>
                         {% else %}
                             <a onclick="return confirm('Voulez-vous vraiment retirer ce rôle utilisateur ?')" href="{{ path('app_user_remove_editor_role', {'id':user.id}) }}" class="btn btn-outline-warning">Retirer le rôle éditeur</a>
                         {% endif %}
