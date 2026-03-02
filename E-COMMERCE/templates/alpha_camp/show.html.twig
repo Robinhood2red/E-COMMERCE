@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AlphaCamp{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>AlphaCamp liste</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ alpha_camp.id }}</td>
+            </tr>
+            <tr>
+                <th>Nom</th>
+                <td>{{ alpha_camp.name }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a class="btn btn-warning mb-3" href="{{ path('app_alpha_camp_edit', {'id': alpha_camp.id}) }}">Options</a><br>
+
+    {{ include('alpha_camp/_delete_form.html.twig') }}
+
+    <a class="btn btn-light" href="{{ path('app_alpha_camp_index') }}">Retour aux listes</a>
+
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}AlphaCamp index{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>AlphaCamp index</h1>
+        
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Name</th>
+                        <th>actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for alpha_camp in alpha_camps %}
+                    <tr>
+                        <td>{{ alpha_camp.id }}</td>
+                        <td>{{ alpha_camp.name }}</td>
+                        <td>
+                            <a class="btn btn-outline-primary" href="{{ path('app_alpha_camp_show', {'id': alpha_camp.id}) }}">Voir</a>
+                            <a class="btn btn-warning" href="{{ path('app_alpha_camp_edit', {'id': alpha_camp.id}) }}">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="3">no records found</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        
+        <a class="btn btn-success btn-lg pl-2" href="{{ path('app_alpha_camp_new') }}">Crée une nouvelle catégorie</a>
+    </div>
+{% endblock %}

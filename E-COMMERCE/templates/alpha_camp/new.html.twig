@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New AlphaCamp{% endblock %}
+
+{% block body %}
+<div class="container">
+    <h1>Crée un nouveau AlphaCamp</h1>
+
+    {{ include('alpha_camp/_form.html.twig') }}
+
+    <a class="btn btn-light" href="{{ path('app_alpha_camp_index') }}">Retour aux listes</a>
+</div>
+{% endblock %}
