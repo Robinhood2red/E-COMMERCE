@@ -15,7 +15,7 @@
             Catégories
           </a>
           <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="{{ path('app_alpha_camp_index') }}">Alpha Camp</a></li>
+            <li><a class="dropdown-item" href="#">Alpha Camp</a></li>
             <li><a class="dropdown-item" href="#">Alpha Fight Club</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="#">Gigachad Face Classroom</a></li>
@@ -29,6 +29,8 @@
           <ul class="dropdown-menu">
             <li><a class="dropdown-item" href="{{ path('app_category') }}">Liste des catégories</a></li>
             <li><a class="dropdown-item" href="{{ path('app_category_new') }}">Ajouter une catégorie</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_alpha_camp_index') }}">Sous-catégories</a></li>
+            <li><a class="dropdown-item" href="{{ path('app_product_index') }}">Produits</a></li>
             <li><hr class="dropdown-divider"></li>
             <li><a class="dropdown-item" href="{{ path('app_user') }}">Utilisateurs</a></li>
           </ul>
@@ -50,8 +52,8 @@
 
       </ul>
       <form class="d-flex" role="search">
-        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <input class="form-control me-2" type="search" placeholder="Rechercher..." aria-label="Search"/>
+        <button class="btn btn-outline-success" type="submit">Rechercher</button>
       </form>
     </div>
   </div>

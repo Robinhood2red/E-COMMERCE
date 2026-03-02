@@ -1,0 +1,8 @@
+{{ form_start(form) }}
+    {{ form_row(form.name, {attr:{'class': 'form form-control'}}) }}
+    {{ form_row(form.product_description, {attr:{'class': 'form form-control'}}) }}
+    {{ form_row(form.price, {attr:{'class': 'form form-control'}}) }}
+    {{ form_row(form.subCategory, {attr:{'class': 'form form-control'}}) }}
+    {{ form_row(form.image, {attr:{'class': 'form form'}}) }}
+    <button class="btn btn-success mt-3 mb-3">{{ button_label|default('Sauvegarder') }}</button>
+{{ form_end(form) }}

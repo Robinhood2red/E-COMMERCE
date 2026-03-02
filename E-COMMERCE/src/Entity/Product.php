@@ -31,6 +31,9 @@ class Product
     #[ORM\ManyToMany(targetEntity: AlphaCamp::class, inversedBy: 'products')]
     private Collection $subCategory;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $images = null;
+
     public function __construct()
     {
         $this->subCategory = new ArrayCollection();
@@ -97,6 +100,18 @@ class Product
     public function removeSubCategory(AlphaCamp $subCategory): static
     {
         $this->subCategory->removeElement($subCategory);
+
+        return $this;
+    }
+
+    public function getImages(): ?string
+    {
+        return $this->images;
+    }
+
+    public function setImages(?string $images): static
+    {
+        $this->images = $images;
 
         return $this;
     }

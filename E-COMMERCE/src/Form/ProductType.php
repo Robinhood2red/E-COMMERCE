@@ -1,0 +1,53 @@
+<?php
+
+namespace App\Form;
+
+use App\Entity\AlphaCamp;
+use App\Entity\Product;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+
+class ProductType extends AbstractType
+{
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+            ->add('name')
+            ->add('product_description')
+            ->add('price')
+            ->add('image', FileType::class, [
+                'label' => false,
+                'mapped' => false,
+                'requierd' => false, // Ce n'est pas obligatoire
+                'constraints' =>[
+                    new File([
+                        'maxSize' => '1024k',
+                        'mimeTypes' => [
+                            'image/jpeg',
+                            'image/png',
+                            'image/jpg',
+                        ],
+                        'maxSizeMessage' => 'Votre image ne doit pas dépasser 1024ko',
+                        'mimeTypesMessage' => 'Veuillez choisir un fichier de type image valide (jpeg, png, jpg) !',
+                    ])
+                ]
+            ])
+            ->add('subCategory', EntityType::class, [
+                'class' => AlphaCamp::class,
+                'choice_label' => 'name', //! voir si 'id' c'est mieux
+                'multiple' => true,
+            ])
+        ;
+    }
+
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => Product::class,
+        ]);
+    }
+}
