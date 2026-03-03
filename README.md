@@ -18,3 +18,6 @@ php -S localhost:8000 -t public
 Ma sous catégorie = alpha_camp
 
 https://www.udemy.com/course/python-pour-la-data-le-cours-ultime/
+
+Pour le TD :
+https://www.youtube.com/shorts/izwW9mYZjtY

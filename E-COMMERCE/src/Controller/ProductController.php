@@ -12,12 +12,14 @@ use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 
-#[Route('/product')]
+#[Route('/editor')]
+#[IsGranted('ROLE_ADMIN')]
 final class ProductController extends AbstractController
 {
-    #[Route(name: 'app_product_index', methods: ['GET'])]
+    #[Route('/product', name: 'app_product_index', methods: ['GET'])]
     public function index(ProductRepository $productRepository): Response
     {
         return $this->render('product/index.html.twig', [
