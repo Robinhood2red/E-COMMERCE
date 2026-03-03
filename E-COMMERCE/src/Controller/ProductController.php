@@ -27,7 +27,7 @@ final class ProductController extends AbstractController
             'products' => $productRepository->findAll(),
         ]);
     }
-#region Add
+#region NEW
     #[Route('/new', name: 'app_product_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
@@ -72,7 +72,7 @@ final class ProductController extends AbstractController
         ]);
     }
 #endregion 
-#region Show
+#region SHOW
     #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
     public function show(Product $product): Response
     {
@@ -81,7 +81,7 @@ final class ProductController extends AbstractController
         ]);
     }
 #endregion
-#region Edit
+#region EDIT
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
@@ -99,6 +99,10 @@ final class ProductController extends AbstractController
             'form' => $form,
         ]);
     }
+#endregion
+#region ADD
+
+
 #endregion
 #region Delete
     #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
