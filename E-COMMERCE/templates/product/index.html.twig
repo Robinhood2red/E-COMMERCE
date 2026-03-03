@@ -25,10 +25,17 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.productDescription|slice(0,100)  }} ...</td>{#  Découpe la description #}
                 <td>{{ product.price }}</td>
-                <td>{{ product.Stock }}</td>
+                <td>
+                {% if product.stock > 0 %}
+                    {{ product.stock }}
+                {% else %}
+                    <span class='text-danger'>Stock épuisé</span>
+                {% endif %}
+                </td>
                 <td class="d-flex align-items-center gap-2">
                     <a class="btn btn-outline-primary" href="{{ path('app_product_show', {'id': product.id}) }}">Voir</a>
                     <a class="btn btn-warning" href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
+                    <a class="btn btn-outline-info" href="">Ajouter du stock</a>
                     {{ include('product/_delete_form.html.twig') }}
                 </td>
             </tr>

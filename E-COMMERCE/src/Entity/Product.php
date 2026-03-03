@@ -16,7 +16,7 @@ class Product
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 180, unique: true)]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
@@ -31,7 +31,7 @@ class Product
     #[ORM\ManyToMany(targetEntity: AlphaCamp::class, inversedBy: 'products')]
     private Collection $subCategory;
 
-    #[ORM\Column(length: 255, nullable: true)]
+    #[ORM\Column(length: 180, nullable: true)]
     private ?string $images = null;
 
     #[ORM\Column]
