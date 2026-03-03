@@ -3,6 +3,7 @@
     {{ form_row(form.product_description, {attr:{'class': 'form form-control'}}) }}
     {{ form_row(form.price, {attr:{'class': 'form form-control'}}) }}
     {{ form_row(form.subCategory, {attr:{'class': 'form form-control'}}) }}
-    {{ form_row(form.image, {attr:{'class': 'form form'}}) }}
+    {{ form_row(form.stock, {attr:{'class': 'form form-control'}}) }}
+    {{ form_row(form.image, {attr:{'class': 'form form-control mt-4'}}) }}
     <button class="btn btn-success mt-3 mb-3">{{ button_label|default('Sauvegarder') }}</button>
 {{ form_end(form) }}

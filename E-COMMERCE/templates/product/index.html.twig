@@ -14,6 +14,7 @@
                 <th>Name</th>
                 <th>Product_description</th>
                 <th>Price</th>
+                <th>Stock</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -24,6 +25,7 @@
                 <td>{{ product.name }}</td>
                 <td>{{ product.productDescription|slice(0,100)  }} ...</td>{#  Découpe la description #}
                 <td>{{ product.price }}</td>
+                <td>{{ product.Stock }}</td>
                 <td class="d-flex align-items-center gap-2">
                     <a class="btn btn-outline-primary" href="{{ path('app_product_show', {'id': product.id}) }}">Voir</a>
                     <a class="btn btn-warning" href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
