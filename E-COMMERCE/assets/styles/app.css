@@ -34,27 +34,29 @@ body {
         width: 100%;
     }
     /* ----------------------------------PAGE home_page show------------------------------------- */
-/* Conteneur de l'image */
+/* -----------Conteneur de l'image---------- */
+    .bg-dark-custom {
+        background-color: #212529 !important;
+    }
     .product-image-container {
         position: relative;
-        overflow: hidden; /* Important : empêche l'image de dépasser quand elle grossit */
+        overflow: hidden;
+        /* Ajout d'une bordure très légère pour détacher l'image du fond si nécessaire */
+        border: 1px solid rgba(255, 255, 255, 0.05);
     }
-
-    /* L'image par défaut */
     .zoom-img {
-        transition: transform 0.5s cubic-bezier(0.15, 1, 0.3, 1); /* Transition fluide */
+        transition: transform 0.5s cubic-bezier(0.15, 1, 0.3, 1);
+        display: block; /* Évite les espaces blancs sous l'image */
     }
-
-    /* L'effet au survol */
     .product-image-container:hover .zoom-img {
-        transform: scale(1.2); /* Zoom de 20% */
+        transform: scale(1.15); /* Zoom légèrement réduit pour éviter le flou sur fond noir */
     }
 
-    /* Petit bonus pour le badge "Alpha" en transparent */
+    /* Styles pour la colonne texte */
     .bg-success-soft {
-        background-color: rgba(25, 135, 84, 0.1);
+        background-color: rgba(25, 135, 84, 0.15);
     }
-
+    
     .leading-relaxed {
         line-height: 1.8;
     }
