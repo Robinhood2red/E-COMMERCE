@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <div class="container">
+        {% if productsAdded is not empty %}
+            {#* |first dit à Twig : "Prends uniquement le tout premier objet AddProductHistory qui se trouve dans la liste" #}
+            <h2 class="pt-2 pb-2">Historique des stocks pour : {{ productsAdded|first.product.name }}</h2> {# |first pour ne pas avoie 1 titre pour 1 modification #}
+        {% else %}
+            <h2>Aucun historique pour ce produit.</h2>
+        {% endif %}
+        <table class="table">
+            <tr>
+                <th>Id</th>
+                <th>Quantité</th>
+                <th>Date d'ajout</th>
+            </tr>
+            {% for productAdded in productsAdded %}
+            <tr>
+                <td>{{ productAdded.id }}</td>
+                <td>{{ productAdded.quantity }}</td>
+                <td>{{ productAdded.createdAt|date('d-m-Y H:i:s', 'Europe/Paris') }}</td>{#* Un peu comme l'horlohe #}
+            </tr>
+            {% endfor %}
+        </table>
+        <a class="btn btn-light" href="{{ path('app_product_index') }}">Retour aux listes</a>
+    </div>
+{% endblock %}

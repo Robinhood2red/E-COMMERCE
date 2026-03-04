@@ -4,7 +4,9 @@ namespace App\Controller;
 
 use App\Entity\AddProductHistory;
 use App\Entity\Product;
+use App\Form\AddProductHistoryType;
 use App\Form\ProductType;
+use App\Repository\AddProductHistoryRepository;
 use App\Repository\ProductRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -101,10 +103,67 @@ final class ProductController extends AbstractController
     }
 #endregion
 #region ADD
+#[Route('/add/product/{id}/', name: 'app_product_stock_add', methods: ['POST','GET'])]
+public function stockAdd($id, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $product = $entityManager->getRepository(Product::class)->find($id);
 
+    $stockAdd = new AddProductHistory();
+    $form = $this->createForm(AddProductHistoryType::class, $stockAdd);
+    $form->handleRequest($request);
 
+    if ($form->isSubmitted() && $form->isValid()) {
+        if($stockAdd->getQuantity()>0){ // Aditions seulement
+            // Pour voi la quantitée actuelle
+            $newQuantity = $stockAdd->getQuantity();
+
+            // pn met à jour le stock du produit
+            $currentStock = $product->getStock();
+            $product->setStock($currentStock + $newQuantity);
+
+            //* Ajoute la date de l'ajout du produit
+            // AddProductHistory NOT NULL obligatoire --> sans setCreatedAt la colonne created_at sera vide
+            $stockAdd->setCreatedAt(new \DateTimeImmutable()); 
+            // Sans setProduct la colonne product_id (la clé étrangère) sera vide
+            $stockAdd->setProduct($product); 
+
+            $entityManager->persist($stockAdd);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'Le stock a été mis à jour avec succès !');
+
+            return $this->redirectToRoute('app_product_index');
+        }
+    }
+
+    return $this->render('product/addStock.html.twig', [
+        'form' => $form->createView(),
+        'product' => $product
+    ]);
+}
 #endregion
-#region Delete
+#region HISTO REAPRO
+#[Route('/add/product/{id}/stock/history', name: 'app_product_stock_add_history', methods: ['GET'])]
+    public function showHistoryProductStock($id, ProductRepository $productRepository, AddProductHistoryRepository $addProductHistoryRepository):Response
+    {
+        //* On utilise le Repository de Product pour transformer l'ID de l'URL en un objet complet
+        // Cela permet de vérifier si le produit existe et de récupérer son Nom, son Stock actuel
+        $product = $productRepository->find($id);// ici pour récup le produit en paramètres
+
+        //* On utilise le Repository de l'historique pour chercher les lignes spécifiques
+        // - ['product' => $product] : On filtre pour n'avoir QUE l'historique lié à ce produit (le WHERE en SQL)
+        // - ['id' => 'DESC'] : On trie par ID décroissant pour avoir les ajouts les plus récents en haut (le ORDER BY)
+        $productAddHistory = $addProductHistoryRepository->findBy(['product'=>$product],['id'=>'DESC']);
+        
+        //* On envoie les données à la vue Twig
+        // "productsAdded" est le nom de la variable dans la boucle {% for %} en Twig
+        // "product" est passé ici pour afficher le nom du produit dans le titre de la page
+        return $this->render('product/addedHistoryStockShow.html.twig',[ // 
+            "productsAdded"=>$productAddHistory
+        ]);
+    }
+#endregion
+#region DELETE
     #[Route('/{id}', name: 'app_product_delete', methods: ['POST'])]
     public function delete(Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
