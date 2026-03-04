@@ -6,6 +6,7 @@ use App\Entity\AddProductHistory;
 use App\Entity\Product;
 use App\Form\AddProductHistoryType;
 use App\Form\ProductType;
+use App\Form\ProductUpdateType;
 use App\Repository\AddProductHistoryRepository;
 use App\Repository\ProductRepository;
 use DateTimeImmutable;
@@ -85,15 +86,27 @@ final class ProductController extends AbstractController
 #endregion
 #region EDIT
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Product $product, EntityManagerInterface $entityManager): Response
+    public function edit(SluggerInterface $slugger, Request $request, Product $product, EntityManagerInterface $entityManager): Response
     {
-        $form = $this->createForm(ProductType::class, $product);
+        $form = $this->createForm(ProductUpdateType::class, $product);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
+            $image = $form->get('image')->getData();//! on recup l'image et son contenu
+                if ($image) {/*si l'image existe*/
+                $originalName = pathinfo($image->getClientOriginalName(), PATHINFO_FILENAME); // Nom d'origine de l'image
+                $safeImageName = $slugger->slug($originalName);/* permet de recup des image avec espace dans le nom et l'enlever*/
+                $newFileImageName = $safeImageName.'-'.uniqid().'.'.$image->guessExtension();/*cree un id unique a toute les images meme si elles ont un nom similaire*/
 
-            return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
+                try { // On tente de déplacer le fichier physiquement sur le serveur
+                    $image->move
+                        ($this->getParameter('image_directory'), // getParameter, crée un dossier et envoie le à cet endroit là ('dans services.yaml')
+                        $newFileImageName);/* on recup l'image et on la renomme et on la stocke dans le repoertoire */
+                }catch (FileException $exception) {}/*en cas d'erreur -> Si le déplacement échoue, on arrive ici*/
+                    $product->setImages($newFileImageName); // set(nouveau nom image)
+            } 
+            $entityManager->flush();
+            return $this->redirectToRoute('app_product_index');
         }
 
         return $this->render('product/edit.html.twig', [
