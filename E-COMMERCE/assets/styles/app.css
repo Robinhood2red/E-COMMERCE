@@ -12,3 +12,49 @@ body {
     width: 100%;
     height: 50vh;
 }
+
+    /* L'animation de grossissement que tu voulais */
+    .custom-card {
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+
+    .custom-card:hover {
+        transform: scale(1.03); /* Un grossissement léger et élégant */
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    }
+
+    .img-container {
+        overflow: hidden;
+        height: 300px; /* Force une hauteur uniforme pour l'alignement */
+    }
+
+    .img-container img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+    }
+    /* ----------------------------------PAGE home_page show------------------------------------- */
+/* Conteneur de l'image */
+    .product-image-container {
+        position: relative;
+        overflow: hidden; /* Important : empêche l'image de dépasser quand elle grossit */
+    }
+
+    /* L'image par défaut */
+    .zoom-img {
+        transition: transform 0.5s cubic-bezier(0.15, 1, 0.3, 1); /* Transition fluide */
+    }
+
+    /* L'effet au survol */
+    .product-image-container:hover .zoom-img {
+        transform: scale(1.2); /* Zoom de 20% */
+    }
+
+    /* Petit bonus pour le badge "Alpha" en transparent */
+    .bg-success-soft {
+        background-color: rgba(25, 135, 84, 0.1);
+    }
+
+    .leading-relaxed {
+        line-height: 1.8;
+    }

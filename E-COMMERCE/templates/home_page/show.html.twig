@@ -1,0 +1,67 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    {# Bouton retour #}
+    <div class="mb-4">
+        <a href="{{ path('app_home_page') }}" class="btn btn-link text-decoration-none text-muted p-0">
+            <i class="bi bi-arrow-left"></i> ← Retour aux produits
+        </a>
+    </div>
+
+    <div class="row g-5">
+        {# Colonne Image #}
+        <div class="col-md-6">
+            <div class="product-image-container shadow-sm rounded-4 overflow-hidden bg-white">
+                <img src="{{ asset('/images/' ~ product.images) }}" 
+                    class="img-fluid w-100 zoom-img" 
+                    alt="{{ product.name }}"
+                    style="max-height: 500px; object-fit: contain;">
+            </div>
+        </div>
+
+        {# Colonne Infos #}
+        <div class="col-md-6">
+            <div class="ps-lg-4">
+                <nav aria-label="breadcrumb" class="mb-2">
+                    <span class="badge bg-success-soft text-success mb-2">Certifié Alpha α</span>
+                </nav>
+                
+                <h1 class="display-5 fw-bold mb-3">{{ product.name }}</h1>
+                
+                {# Prix #}
+                <div class="h3 fw-light text-success mb-4">
+                    {{ product.price|default('Prix sur demande') }} €
+                </div>
+
+                <hr class="my-4 text-muted opacity-25">
+
+                {# Description #}
+                <h5 class="fw-bold">Description</h5>
+                <p class="leading-relaxed" style="text-align: justify; white-space: pre-line;">
+                    {{ product.productDescription }}
+                </p>
+
+                {# Btn ajouter au panier et Coup de coeur #}
+                <div class="d-grid gap-2 d-md-flex mt-5">
+                    <button class="btn btn-success btn-lg px-5 py-3 shadow-sm rounded-pill">
+                        Ajouter au panier
+                    </button>
+                    <button class="btn btn-outline-danger btn-lg px-4 py-3 rounded-pill">
+                        <i class="bi bi-heart-fill"></i>
+                    </button>
+                </div>
+                
+                {# Texte livraison #}
+                <div class="mt-4 pt-3 border-top">
+                    <p class="small text-muted mb-0">
+                        <i class="bi bi-truck"></i> Livraison gratuite sous 3 à 5 jours ouvrés.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
