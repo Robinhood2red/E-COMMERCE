@@ -11,6 +11,7 @@
                 {# On entoure la card avec le lien, ou on utilise la classe 'stretched-link' de Bootstrap #}
                 <div class="card h-100 custom-card border-0 shadow-sm position-relative">
                     <div class="img-container">
+                        {#* ~ vaut . ou + // Si product.images vaut guitare.jpg, Twig transformera cela en /images/guitare.jpg. #}
                         <img src="{{ asset('/images/' ~ product.images) }}" class="card-img-top img-fluid" alt="{{ product.name }}">
                         <div class="card-overlay">
                             <span class="badge bg-light text-dark shadow-sm">Certifié Alpha α</span>
