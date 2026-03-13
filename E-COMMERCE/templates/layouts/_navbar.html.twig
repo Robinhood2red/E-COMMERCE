@@ -1,0 +1,88 @@
+<nav class="navbar navbar-expand-lg border-bottom border-alpha bg-dark-alpha shadow-lg" data-bs-theme='dark'>
+    <div class="container">
+        <a class="navbar-brand brand-alpha d-flex align-items-center" href="{{ path('app_home_page') }}">
+            <span class="alpha-symbol">α</span>
+            <span class="ms-1 text-white tracking-tighter">lpha</span>
+            <span class="shop-text fw-black text-primary-alpha ms-1">COMMANDO</span>
+        </a>
+
+        <button class="navbar-toggler border-alpha" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
+                <li class="nav-item">
+                    <a class="nav-link text-uppercase ls-1 {{ app.current_route == 'app_home_page' ? 'active text-primary-alpha' }}" href="{{ path('app_home_page') }}">
+                        Accueil
+                    </a>
+                </li>
+              {% if categories is defined %}
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-uppercase ls-1" href="#" role="button" data-bs-toggle="dropdown">
+                        Catégories
+                    </a>
+                    <ul class="dropdown-menu bg-dark-alpha border-alpha shadow-xl rounded-0">
+                      {% for category in categories %}
+                          <li><a class="dropdown-item text-uppercase small ls-1" href="#">{{ category.name }}</a></li>
+                          <li><hr class="dropdown-divider border-alpha"></li>
+                      {% endfor %}
+                    </ul>
+                </li>
+              {% endif %}
+
+                {% if is_granted("ROLE_ADMIN") %}
+                    <li class="nav-item dropdown border-start border-alpha ms-lg-2 ps-lg-3">
+                        <a class="nav-link dropdown-toggle text-primary-alpha fw-bold text-uppercase ls-1" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-shield-lock"></i> Admin
+                        </a>
+                        <ul class="dropdown-menu bg-dark-alpha border-alpha shadow-xl rounded-0">
+                            <li class="dropdown-header text-secondary-alpha text-uppercase small">Infrastructure</li>
+                            <li><a class="dropdown-item" href="{{ path('app_category_new') }}"><i class="bi bi-plus-lg me-2"></i>Forger Catégorie</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_product_index') }}"><i class="bi bi-box-seam me-2"></i>Inventaire</a></li>
+                            <li><hr class="dropdown-divider border-alpha"></li>
+                            <li class="dropdown-header text-secondary-alpha text-uppercase small">Unités</li>
+                            <li><a class="dropdown-item" href="{{ path('app_user') }}"><i class="bi bi-people me-2"></i>Membres</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+            </ul>
+
+            <form class="d-flex me-lg-4" role="search">
+                <div class="input-group border-alpha">
+                    <input class="form-control bg-transparent border-0 text-white small" type="search" placeholder="RECHERCHE DATA..." aria-label="Search">
+                    <button class="btn btn-outline-alpha border-0 text-primary-alpha" type="submit">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+                {% if app.user %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle border-alpha px-3 text-white" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-cpu text-primary-alpha me-1"></i> {{ app.user.userIdentifier }}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end bg-dark-alpha border-alpha rounded-0">
+                            {% if not is_granted("ROLE_ADMIN") %}
+                                <li><a class="dropdown-item" href="#">Mon Profil</a></li>
+                            {% endif %}
+                            <li><a class="dropdown-item" href="#">Mes Commandes</a></li>
+                            <li><hr class="dropdown-divider border-alpha"></li>
+                            <li><a class="dropdown-item text-danger text-uppercase fw-bold" href="{{ path('app_logout') }}">Déconnexion</a></li>
+                        </ul>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link text-uppercase ls-1" href="{{ path('app_login') }}">Accès</a>
+                    </li>
+                    <li class="nav-item ms-lg-2">
+                        <a class="btn btn-alpha-action px-4 py-2 rounded-0 text-uppercase fw-black" href="{{ path('app_register') }}">
+                            S'enrôler
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>

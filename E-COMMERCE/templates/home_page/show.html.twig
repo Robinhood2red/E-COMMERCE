@@ -7,7 +7,7 @@
     {# Bouton retour #}
     <div class="mb-4">
         <a href="{{ path('app_home_page') }}" class="btn btn-link text-decoration-none text-muted p-0">
-            <i class="bi bi-arrow-left"></i> ← Retour aux produits
+            <i class="bi bi-arrow-left"></i> Retour aux produits
         </a>
     </div>
 
@@ -57,9 +57,54 @@
                 {# Texte livraison #}
                 <div class="mt-4 pt-3 border-top">
                     <p class="small text-muted mb-0">
-                        <i class="bi bi-truck"></i> Livraison gratuite sous 3 à 5 jours ouvrés.
+                        <i class="bi text-light bi-truck"> Livraison gratuite sous 3 à 5 jours ouvrés.</i>
                     </p>
                 </div>
+            </div>
+        </div>
+    </div>
+    {#* --------- NOUVEAUTÉS -------------- #}
+        <div class="mt-5 pt-5">
+            <h2 class="fw-bold mb-4">Derniers produits ajoutés</h2>
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {% for item in products %}
+                    {% if item.id != product.id %}
+                        <div class="col">
+                            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                                <img src="{{ asset('/images/' ~ item.images) }}" 
+                                    class="card-img-top" 
+                                    alt="{{ item.name }}"
+                                    style="height: 200px; object-fit: cover;">
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title fw-bold">{{ item.name }}</h5>
+                                    <p class="card-text text-muted small">
+                                        {{ item.productDescription|slice(0, 60) }}...
+                                    </p>
+                                    
+                                    <div class="mt-auto">
+                                        <span class="fw-bold text-success d-block mb-3">{{ item.price }} €</span>
+                                        
+                                        <div class="d-grid gap-2">
+                                            {# Bouton Ajouter au panier (Principal) #}
+                                            <button class="btn btn-sm btn-success rounded-pill">
+                                                <i class="bi bi-cart-plus"></i> Ajouter
+                                            </button>
+                                            {# Bouton Voir (Secondaire) #}
+                                            <a href="{{ path('app_home_product_show', {'id': item.id}) }}" 
+                                            class="btn btn-sm btn-outline-secondary border-0 small">
+                                                Détails
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="mt-4 text-sm-start">
+                <p class="text-light small fst-italic">Dernière mise à jour il y a 3 minutes</p>
             </div>
         </div>
     </div>

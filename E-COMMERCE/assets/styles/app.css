@@ -1,10 +1,30 @@
-body {
-    background-color: lightpink;
+/* --- CONFIGURATION ALPHA --- */
+:root {
+    --alpha-gold: #C9951A;        /* Or profond - ton chaud dominant */
+    --alpha-gold-bright: #E8B84B; /* Or brillant - reflet lumineux */
+    --alpha-gold-shadow: rgba(140, 100, 10, 0.35); /* Ombre mordorée */
+    --alpha-dark: #121212; 
+    --alpha-border: #2a2a2a;
 }
+
+body {
+    /* Utilisation du GIF en background avec Gigachad */
+    background: 
+        linear-gradient(rgba(15, 15, 15, 0.85), rgba(15, 15, 15, 0.85)), 
+        url('https://media.giphy.com/media/CAYVZA5NRb529kKQUc/giphy.gif') no-repeat center center fixed;
+    
+    background-size: cover;
+    color: #e0e0e0;
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    min-height: 100vh;
+}
+
 .loginForm {
     width: 500px;
     text-align: center;
 }
+
 .containerForm {
     display: flex;
     align-items: center;
@@ -13,72 +33,76 @@ body {
     height: 50vh;
 }
 
-    /* --------------------------------L'animation de grossissement------------------------------------- */
+/* --- ANIMATIONS DE GROSSISSEMENT --- */
 .custom-card {
     transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
 }
 
 .custom-card:hover {
-    transform: scale(1.03); /* Un grossissement léger */
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;
+    transform: scale(1.03);
+    box-shadow: 0 10px 25px rgba(255, 184, 0, 0.1) !important;
 }
 
 .img-container {
-    position: relative; /*! <--- AJOUT IMPORTANT : devient le point de repère */
+    position: relative;
     overflow: hidden;
     height: 300px;
 }
-.card-overlay { /* le certifié alpha */
+
+.card-overlay {
     position: absolute; 
     top: 15px;          
     left: 15px;         
-    z-index: 10;        /* Passe devant l'image au cas où */
+    z-index: 10;
     pointer-events: none; 
 }
+
 .img-container img {
     object-fit: cover;
     height: 100%;
     width: 100%;
 }
-/* ----------------------------------PAGE home_page show------------------------------------- */
-/* -----------Conteneur de l'image---------- */
+
+/* --- PAGE HOME_PAGE SHOW --- */
 .bg-dark-custom {
-    background-color: #212529 !important;
+    background-color: #1a1a1a; 
 }
+
 .product-image-container {
     position: relative;
     overflow: hidden;
-    /* Ajout d'une bordure très légère pour détacher l'image du fond si nécessaire */
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 184, 0, 0.1);
 }
+
 .zoom-img {
     transition: transform 0.5s cubic-bezier(0.15, 1, 0.3, 1);
-    display: block; /* Évite les espaces blancs sous l'image */
+    display: block;
 }
-.product-image-container:hover .zoom-img {
-    transform: scale(1.15); /* Zoom légèrement réduit pour éviter le flou sur fond noir */
- }
 
-/* -------------------------------Styles pour la colonne txt-------------------------------- */
+.product-image-container:hover .zoom-img {
+    transform: scale(1.15);
+}
+
+/* --- STYLE COLONNE TEXTE --- */
 .bg-success-soft {
-    background-color: rgba(25, 135, 84, 0.15);
+    background-color: rgba(255, 184, 0, 0.1); /* Passage en teinte dorée douce */
 }
     
 .leading-relaxed {
     line-height: 1.8;
 }
 
-/* ---------------------------------------AlphaShop Navbar------------------------------------------ */
+/* --- ALPHASHOP NAVBAR --- */
 .brand-alpha {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 700;
     letter-spacing: -1px;
-    font-size: 1.5rem; /* Équivalent fs-4 */
+    font-size: 1.5rem;
     transition: all 0.3s ease;
 }
 
 .alpha-symbol {
-    color: #bb3030; /* Le vert success de Bootstrap, pour rappeler tes boutons */
+    color: var(--alpha-gold); /* Changé le rouge par du doré */
     font-size: 1.8rem;
     margin-right: -2px;
     display: inline-block;
@@ -86,16 +110,126 @@ body {
 }
 
 .shop-text {
-    font-weight: 300; /* Plus fin pour l'élégance */
-    color: #adb5bd;  /* Un gris clair pour le contraste en mode dark */
+    font-weight: 300;
+    color: #9ca3af; 
 }
 
-/* Petit effet au survol de la souris */
 .brand-alpha:hover .alpha-symbol {
     transform: rotate(-10deg) scale(1.2);
-    color: #e02c2c; /* Un vert un peu plus flashy au survol */
+    color: var(--alpha-gold-bright);
 }
 
 .brand-alpha:hover {
     color: #fff !important;
 }
+
+/* --- SCROLL BAR (Thème Doré) --- */
+@property --p1 { syntax: '<percentage>'; inherits: true; initial-value: 5%; }
+@property --p2 { syntax: '<percentage>'; inherits: true; initial-value: 20%; }
+@property --p3 { syntax: '<percentage>'; inherits: true; initial-value: 80%; }
+@property --p4 { syntax: '<percentage>'; inherits: true; initial-value: 95%; }
+
+#scrollBar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #1a1a1a;
+    background-image: -webkit-linear-gradient(90deg,
+                              transparent var(--p1),
+                              var(--alpha-gold) var(--p2),
+                              var(--alpha-gold) var(--p3),
+                              transparent var(--p4));
+    border: 2px solid #1a1a1a;
+}
+
+/* --- TYPOGRAPHIE --- */
+.fw-black { font-weight: 900; }
+.ls-2 { letter-spacing: 2px; }
+.ls-3 { letter-spacing: 3px; }
+.tracking-tighter { letter-spacing: -2px; }
+.tracking-wider { letter-spacing: 2px; }
+
+/* --- COMPOSANTS --- */
+.bg-dark-alpha {
+    background-color: var(--alpha-dark);
+    border: 1px solid var(--alpha-border);
+}
+
+.border-alpha {
+    border: 1px solid var(--alpha-border);
+}
+
+.text-primary-alpha {
+    color: var(--alpha-gold);
+    text-shadow: 0 0 10px var(--alpha-gold-shadow);
+}
+
+.text-secondary-alpha {
+    color: #888;
+}
+
+.transform-hover:hover { 
+    transform: translateY(-10px); 
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.4)!important;
+    border: 1px solid rgba(255, 184, 0, 0.3)!important;
+}
+
+/* --- BOUTONS --- */
+.btn-alpha-action {
+    background: var(--alpha-gold);
+    color: black; /* Meilleur contraste sur du doré */
+    font-weight: 800;
+    letter-spacing: 1px;
+    border: none;
+    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+.btn-alpha-action:hover {
+    background: white;
+    color: black;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px var(--alpha-gold-shadow);
+}
+
+/* --- CARDS & ANIMATIONS --- */
+.transform-alpha-hover:hover {
+    transform: scale(1.02);
+    border-color: var(--alpha-gold);
+    box-shadow: 0 0 20px rgba(255, 184, 0, 0.15);
+}
+
+.alpha-icon-box {
+    background: rgba(255, 184, 0, 0.05);
+    border: 1px solid var(--alpha-gold);
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--alpha-gold);
+}
+
+.alpha-loader {
+    height: 2px;
+    width: 0%;
+    background: var(--alpha-gold);
+    transition: width 0.4s ease;
+    position: absolute;
+    bottom: 0;
+}
+
+.transform-alpha-hover:hover .alpha-loader {
+    width: 100%;
+}
+/* ---------------------------------- FOOTER -----------------------------------------*/
+    .hover-gold:hover {
+        color: var(--alpha-gold) !important;
+        transition: color 0.3s ease;
+    }
+    .animate-pulse {
+        animation: pulse 2s infinite;
+        box-shadow: 0 0 8px #198754;
+    }
+    @keyframes pulse {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+    }

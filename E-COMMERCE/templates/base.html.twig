@@ -16,10 +16,11 @@
             {% block importmap %}{{ importmap('app') }}{% endblock %}
         {% endblock %}
     </head>
-    <body>
+    <body class="scrollbar" id="scrollBar">
         {% block nav %}
-            {% include 'layouts/navbar.html.twig' %}
+            {% include 'layouts/_navbar.html.twig' %}
         {% endblock %}
         {% block body %}{% endblock %}
+        {% include 'layouts/_footer.html.twig' %}
     </body>
 </html>

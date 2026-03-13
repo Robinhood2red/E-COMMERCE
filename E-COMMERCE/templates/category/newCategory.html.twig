@@ -5,6 +5,7 @@
         <div class="form">
 
             <h2>Ajoutez une catégorie :</h2>
+            {% include 'layouts/_flash_message.html.twig' %}
 
             {{ form_start(form) }}
                 {{ form_row(form.name, {'attr':{'class':'form form-control'}}) }}

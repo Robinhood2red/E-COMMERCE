@@ -5,6 +5,7 @@
 {% block body %}
 <div class="container">
     <h1>Crée un nouveau AlphaCamp</h1>
+    {% include 'layouts/_flash_message.html.twig' %}
 
     {{ include('alpha_camp/_form.html.twig') }}
 

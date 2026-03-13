@@ -1,44 +1,63 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des catégories{% endblock %}
+{% block title %}Matrice des Catégories | Alpha Control{% endblock %}
 
 {% block body %}
-
+<div class="container py-5">
+    {# En-tête avec message flash #}
     {% include 'layouts/_flash_message.html.twig' %}
 
-    <table class="table">
-        <tr>
-            <th>Nom de la catégorie</th>
-            <th>Action</th>
-        </tr>
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-4">
+        <div>
+            <h1 class="display-4 fw-black tracking-tighter text-uppercase italic">
+                <span class="text-primary-alpha">ALPHA</span> COMMAND
+            </h1>
+            <p class="text-secondary-alpha mb-0 text-uppercase small ls-2">Déployez votre empire. Gérez l'infrastructure du catalogue.</p>
+        </div>
+        <a href="{{ path('app_category_new') }}" class="btn btn-alpha-action btn-lg px-5 py-3 rounded-0 shadow-lg">
+            <i class="bi bi-shield-plus"></i> FORGER UNE CATÉGORIE
+        </a>
+    </div>
+
+    {# Grille de catégories #}
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for category in categories %}
-            <tr>
-                <td>
-                    {{ category.name }}
-                </td>
-                <td>
-                    <a href="{{ path('app_category_update', {'id':category.id}) }}" class="btn btn-outline-primary">Modifier</a>
-                    <a onclick="return confirm('Voulez vous vraiment supprimer cette catégorie ?')" href="{{ path('app_category_delete', {'id':category.id}) }}" class="btn btn-danger">Supprimer</a>
-                </td>
-            </tr>
+            <div class="col">
+                <div class="card h-100 border-alpha bg-dark-alpha rounded-0 overflow-hidden transform-alpha-hover">
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="alpha-icon-box me-3">
+                                <i class="bi bi-cpu-fill"></i>
+                            </div>
+                            <h3 class="h5 fw-black mb-0 text-white text-uppercase tracking-widest">{{ category.name }}</h3>
+                        </div>
+
+                        <div class="mt-auto pt-4 border-top border-secondary border-opacity-10">
+                            <div class="d-grid gap-3">
+                                <a href="{{ path('app_category_update', {'id':category.id}) }}" 
+                                   class="btn btn-outline-light rounded-0 btn-sm text-uppercase fw-bold ls-1">
+                                    <i class="bi bi-gear-fill"></i> Recalibrer
+                                </a>
+                                <a onclick="return confirm('Voulez-vous vraiment supprimer cette catégorie ? Cette action est irréversible.')" 
+                                   href="{{ path('app_category_delete', {'id':category.id}) }}" 
+                                   class="btn-terminate text-uppercase">
+                                    <i class="bi bi-x-lg"></i> Supprimer la section
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {#! Barre de progression décorative en bas de carte #}
+                    <div class="alpha-loader"></div>
+                </div>
+            </div>
         {% else %}
-        <p>Aucune catégorie à afficher</p>
+            <div class="col-12 text-center py-5">
+                <div class="p-5 bg-dark-alpha border-alpha-dashed">
+                    <i class="bi bi-incognito display-1 text-secondary-alpha"></i>
+                    <p class="h4 mt-3 text-white text-uppercase italic">Le bunker est vide. Aucune donnée détectée.</p>
+                </div>
+            </div>
         {% endfor %}
-    </table>
-        <a href="{{ path('app_category_new' ) }}" class="btn btn-success">Ajoutez une catégorie</a>
-{% endblock %}
-{# /* <style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>E:/wamp64/www/E-COMMERCE/E-COMMERCE/src/Controller/CategoryController.php</code></li>
-        <li>Your template at <code>E:/wamp64/www/E-COMMERCE/E-COMMERCE/templates/category/index.html.twig</code></li>
-    </ul>
+    </div>
 </div>
-{% endblock %} */ #}
+{% endblock %}
