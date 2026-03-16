@@ -219,7 +219,7 @@ body {
 .transform-alpha-hover:hover .alpha-loader {
     width: 100%;
 }
-/* ---------------------------------- FOOTER -----------------------------------------*/
+/*! ---------------------------------- FOOTER -----------------------------------------*/
     .hover-gold:hover {
         color: var(--alpha-gold) !important;
         transition: color 0.3s ease;
@@ -233,3 +233,76 @@ body {
         50% { opacity: 0.4; }
         100% { opacity: 1; }
     }
+/*! --------------------- PERSONNALISATION DES PLACEHOLDERS --------------------------- */
+
+/* Standard */
+::placeholder {
+    color: #555555 !important;
+    opacity: 1; /* Pour Firefox */
+    font-style: italic;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+/* Chrome, Safari, Edge */
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+    color: #555555 !important;
+}
+
+/* Firefox */
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+    color: #555555 !important;
+}
+
+/* Internet Explorer 10-11 */
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+    color: #555555 !important;
+}
+
+/* --- OPTIMISATION DES CHAMPS DE SAISIE (INPUTS) --- */
+.form-control, .form-select {
+    background-color: rgba(20, 20, 20, 0.8) !important; /* Sombre mais pas noir pur */
+    border: 1px solid var(--alpha-border) !important;
+    color: #e0e0e0 !important;
+}
+
+.form-control:focus {
+    background-color: rgba(30, 30, 30, 0.9) !important;
+    border-color: var(--alpha-gold) !important;
+    box-shadow: 0 0 10px var(--alpha-gold-shadow) !important;
+    outline: none;
+}
+/* --- CORRECTION DE LA VISIBILITÉ DES SAISIES --- */
+
+/* Force la couleur du texte que l'utilisateur tape */
+.form-control, 
+.form-select,
+textarea {
+    color: #ffffff !important; /* Texte blanc pur pour une visibilité maximale */
+    background-color: rgba(20, 20, 20, 0.9) !important;
+}
+
+/* Style des étiquettes (Nom, Description, Prix, etc.) */
+label {
+    color: var(--alpha-gold) !important; /* Les noms des champs en doré */
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 1px;
+    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+}
+
+/* Amélioration spécifique pour la description (textarea) */
+textarea.form-control {
+    min-height: 120px;
+    border: 1px solid var(--alpha-border) !important;
+}
+
+/* Effet au survol des champs pour confirmer l'interaction */
+.form-control:hover {
+    border-color: rgba(201, 149, 26, 0.5) !important;
+}

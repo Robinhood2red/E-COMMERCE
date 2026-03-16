@@ -1,52 +1,84 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Product index{% endblock %}
+{% block title %}Inventaire Tactical | Alpha Control{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1 class='mt-5'>Product index</h1>
+<div class="container py-5">
+    {# Messages flash de confirmation/erreur #}
     {% include 'layouts/_flash_message.html.twig' %}
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Product_description</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for product in products %}
-            <tr>
-                <td>{{ product.id }}</td>
-                <td>{{ product.name }}</td>
-                <td>{{ product.productDescription|slice(0,100)  }} ...</td>{#  Découpe la description #}
-                <td>{{ product.price }}</td>
-                <td>
-                {% if product.stock > 0 %}
-                    {{ product.stock }}
-                {% else %}
-                    <span class='text-danger'>Stock épuisé</span>
-                {% endif %}
-                </td>
-                <td class="d-flex align-items-center gap-2">
-                    <a class="btn btn-outline-primary" href="{{ path('app_product_show', {'id': product.id}) }}">Voir</a>
-                    <a class="btn btn-warning" href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
-                    <a class="btn btn-outline-info" href="{{ path('app_product_stock_add', {'id': product.id}) }}">Ajouter du stock</a>
-                    {{ include('product/_delete_form.html.twig') }}
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="5">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="d-flex justify-content-between align-items-center mb-5 border-bottom border-secondary pb-4">
+        <div>
+            <h1 class="display-4 fw-black tracking-tighter text-uppercase italic">
+                <span class="text-primary-alpha">INVENTAIRE</span> MATÉRIEL
+            </h1>
+            <p class="text-secondary-alpha mb-0 text-uppercase small ls-2">Gestion des unités et du stock disponible.</p>
+        </div>
+        <a href="{{ path('app_product_new') }}" class="btn btn-alpha-action btn-lg px-5 py-3 rounded-0 shadow-lg">
+            <i class="bi bi-box-seam-fill"></i> FORGER UN PRODUIT
+        </a>
+    </div>
 
-    <a class="btn btn-success btn-lg pl-2" href="{{ path('app_product_new') }}">Crée un nouveau produit</a>
+    {# Tableau au style Tactical #}
+    <div class="table-responsive bg-dark-alpha border-alpha p-3">
+        <table class="table table-dark table-hover mb-0 align-middle">
+            <thead class="text-secondary-alpha text-uppercase small ls-1">
+                <tr>
+                    <th class="border-secondary border-opacity-10">ID</th>
+                    <th class="border-secondary border-opacity-10">Désignation</th>
+                    <th class="border-secondary border-opacity-10">Spécifications</th>
+                    <th class="border-secondary border-opacity-10 text-center">Crédits</th>
+                    <th class="border-secondary border-opacity-10 text-center">Unités</th>
+                    <th class="border-secondary border-opacity-10 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody class="text-white">
+            {% for product in products %}
+                <tr>
+                    <td class="fw-bold text-primary-alpha">#{{ product.id }}</td>
+                    <td class="text-uppercase fw-black ls-1">{{ product.name }}</td>
+                    <td class="small text-secondary-alpha">
+                        {{ product.productDescription|slice(0, 80) }}...
+                    </td>
+                    <td class="text-center fw-bold">{{ product.price }} €</td>
+                    <td class="text-center">
+                        {% if product.stock > 0 %}
+                            <span class="badge rounded-0 bg-transparent border border-success text-success px-3 py-2">
+                                {{ product.stock }} DISPONIBLE
+                            </span>
+                        {% else %}
+                            <span class="badge rounded-0 bg-transparent border border-danger text-danger px-3 py-2 italic fw-black">
+                                STOCK ÉPUISÉ
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td class="text-end">
+                        <div class="d-flex justify-content-end gap-2">
+                            <a class="btn btn-sm btn-outline-light rounded-0" href="{{ path('app_product_show', {'id': product.id}) }}" title="Voir">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a class="btn btn-sm btn-warning rounded-0" href="{{ path('app_product_edit', {'id': product.id}) }}" title="Modifier">
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                            <a class="btn btn-sm btn-outline-info rounded-0" href="{{ path('app_product_stock_add', {'id': product.id}) }}" title="Réapprovisionner">
+                                <i class="bi bi-plus-circle"></i>
+                            </a>
+                            <div class="d-inline-block">
+                                {{ include('product/_delete_form.html.twig') }}
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6" class="text-center py-5">
+                        <i class="bi bi-search display-4 text-secondary-alpha d-block mb-3"></i>
+                        <p class="text-uppercase italic ls-1">Aucune donnée détectée dans l'inventaire.</p>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </div>
 {% endblock %}

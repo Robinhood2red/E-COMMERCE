@@ -24,7 +24,10 @@
                     </a>
                     <ul class="dropdown-menu bg-dark-alpha border-alpha shadow-xl rounded-0">
                       {% for category in categories %}
-                          <li><a class="dropdown-item text-uppercase small ls-1" href="#">{{ category.name }}</a></li>
+                          <li><a class="dropdown-item text-uppercase small ls-1 text-warning" href="#">{{ category.name }}</a></li>
+                            {% for alphaCamp in category.alphaCamps %}
+                                <li><a class="dropdown-item small ps-4 text-white-50" href="{{ path('app_home_product_filter', {'id': alphaCamp.id}) }}"><i class="bi bi-arrow-return-right me-2"></i>{{ alphaCamp.name }}</a></li>
+                            {% endfor %}
                           <li><hr class="dropdown-divider border-alpha"></li>
                       {% endfor %}
                     </ul>
@@ -37,9 +40,13 @@
                             <i class="bi bi-shield-lock"></i> Admin
                         </a>
                         <ul class="dropdown-menu bg-dark-alpha border-alpha shadow-xl rounded-0">
-                            <li class="dropdown-header text-secondary-alpha text-uppercase small">Infrastructure</li>
+                            <li class="dropdown-header text-secondary-alpha text-uppercase small">Catégories</li>
+                            <li><a class="dropdown-item" href="{{ path('app_category') }}"><i class="bi bi-eye me-2"></i>Voir Catégorie</a></li>
                             <li><a class="dropdown-item" href="{{ path('app_category_new') }}"><i class="bi bi-plus-lg me-2"></i>Forger Catégorie</a></li>
+                            <li><hr class="dropdown-divider border-alpha"></li>
+                            <li class="dropdown-header text-secondary-alpha text-uppercase small">Produits</li>
                             <li><a class="dropdown-item" href="{{ path('app_product_index') }}"><i class="bi bi-box-seam me-2"></i>Inventaire</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_product_new') }}"><i class="bi bi-plus-lg me-2"></i>Forger un nouveau produit</a></li>
                             <li><hr class="dropdown-divider border-alpha"></li>
                             <li class="dropdown-header text-secondary-alpha text-uppercase small">Unités</li>
                             <li><a class="dropdown-item" href="{{ path('app_user') }}"><i class="bi bi-people me-2"></i>Membres</a></li>
@@ -74,7 +81,7 @@
                     </li>
                 {% else %}
                     <li class="nav-item">
-                        <a class="nav-link text-uppercase ls-1" href="{{ path('app_login') }}">Accès</a>
+                        <a class="nav-link text-uppercase ls-1" href="{{ path('app_login') }}">Se connecter</a>
                     </li>
                     <li class="nav-item ms-lg-2">
                         <a class="btn btn-alpha-action px-4 py-2 rounded-0 text-uppercase fw-black" href="{{ path('app_register') }}">
