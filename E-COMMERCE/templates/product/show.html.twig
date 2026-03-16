@@ -1,46 +1,75 @@
+{# templates/product/show.html.twig #}
 {% extends 'base.html.twig' %}
 
-{% block title %}Product{% endblock %}
+{% block title %}Spécifications {{ product.name }} | Alpha Control{% endblock %}
 
 {% block body %}
-<div class="container">
-    <h1>Product</h1>
+<div class="container py-5">
+    {# En-tête avec fil d'Ariane tactique #}
+    <div class="mb-5 border-bottom border-alpha pb-3">
+        <h1 class="display-5 fw-black text-uppercase italic tracking-tighter">
+            <span class="text-primary-alpha">ANALYSE UNITÉ :</span> {{ product.name }}
+        </h1>
+        <p class="text-secondary-alpha small ls-2 mb-0">RÉFÉRENCE : #{{ product.id }} | SECTEUR : {{ current_filter }}</p>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ product.id }}</td>
-            </tr>
-            <tr>
-                <th>Nom</th>
-                <td>{{ product.name }}</td>
-            </tr>
-            <tr>
-                <th>Description du produit</th>
-                <td>{{ product.productDescription }}</td>
-            </tr>
-            <tr>
-                <th>Prix</th>
-                <td>{{ product.price }}</td>
-            </tr>
-            <tr>
-                <th>Stock</th>
-                <td>{{ product.stock }}</td>
-            </tr>
-        </tbody>
-    </table>
-    <div class="d-flex flex-column align-items-start gap-3">
+    <div class="row g-5">
+        {# Colonne Image #}
+        <div class="col-lg-5">
+            <div class="position-relative border-alpha p-2 bg-dark-alpha shadow-lg">
+                <img src="{{ asset('/images/' ~ product.images) }}" class="img-fluid w-100" alt="{{ product.name }}">
+                <div class="position-absolute bottom-0 end-0 m-3">
+                    <span class="badge bg-primary-alpha text-dark fw-black rounded-0 px-3 py-2">CERTIFIÉ ALPHA α</span>
+                </div>
+            </div>
+        </div>
 
-        <a class="btn btn-warning" href="{{ path('app_product_edit', {'id': product.id}) }}">Modifier</a>
+        {# Colonne Spécifications #}
+        <div class="col-lg-7">
+            <div class="bg-dark-alpha border-alpha p-4 h-100 d-flex flex-column">
+                <h3 class="h6 fw-black text-primary-alpha text-uppercase ls-1 mb-4 border-bottom border-secondary pb-2">
+                    <i class="bi bi-cpu-fill me-2"></i>Données de l'équipement
+                </h3>
 
-        <a class="btn btn-info" href="{{ path('app_product_stock_add', {'id': product.id}) }}">Ajouter du stock</a>
+                <div class="mb-4">
+                    <label class="text-secondary-alpha small text-uppercase fw-bold ls-1 d-block mb-1">Description</label>
+                    <p class="text-white lead italic" style="text-align: justify;">"{{ product.productDescription }}"</p>
+                </div>
 
-        <a class="btn btn-dark" href="{{ path('app_product_stock_add_history', {'id': product.id}) }}">Voir l'historique des stocks</a>
+                <div class="row g-3 mb-5">
+                    <div class="col-6">
+                        <div class="p-3 border border-secondary shadow-sm">
+                            <label class="text-secondary-alpha x-small text-uppercase d-block mb-1">État du Stock</label>
+                            <span class="h4 fw-black {{ product.stock > 0 ? 'text-success' : 'text-danger' }}">
+                                {{ product.stock }} <small class="h6">UNITÉS</small>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="p-3 border border-secondary shadow-sm">
+                            <label class="text-secondary-alpha x-small text-uppercase d-block mb-1">Coût d'acquisition</label>
+                            <span class="h4 fw-black text-primary-alpha">{{ product.price }} €</span>
+                        </div>
+                    </div>
+                </div>
 
-        {{ include('product/_delete_form.html.twig') }}
-
-        <a class="btn btn-light" href="{{ path('app_product_index') }}">Retour aux listes</a>
+                {# Actions de commandement #}
+                <div class="mt-auto pt-4 border-top border-secondary">
+                    <div class="d-grid gap-2 d-md-flex">
+                        <a class="btn btn-alpha-action px-4 py-2 rounded-0 flex-grow-1" href="{{ path('app_product_edit', {'id': product.id}) }}">
+                            <i class="bi bi-pencil-square me-2"></i>MODIFIER
+                        </a>
+                        <a class="btn btn-outline-info px-4 py-2 rounded-0" href="{{ path('app_product_stock_add', {'id': product.id}) }}">
+                            <i class="bi bi-plus-circle me-2"></i>STOCK
+                        </a>
+                        {{ include('product/_delete_form.html.twig') }}
+                    </div>
+                    <a class="text-secondary-alpha text-decoration-none small mt-3 d-inline-block ls-1" href="{{ path('app_home_page') }}">
+                        <i class="bi bi-arrow-left"></i> RETOUR AU CENTRE DE DÉPLOIEMENT
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

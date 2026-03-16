@@ -34,12 +34,8 @@ final class HomePageController extends AbstractController
         ]);
     }
     #[Route('/product/subcategory/{id}/filter', name: 'app_home_product_filter', methods: ['GET'])]
-    public function filter(
-        int $id, 
-        AlphaCampRepository $alphaCampRepository, 
-        CategorieRepository $categorieRepository
-    ): Response {
-        // ici récupère la sous-catégorie
+    public function filter(int $id, AlphaCampRepository $alphaCampRepository, CategorieRepository $categorieRepository): Response {
+        // ici pour récupèrer la sous-catégorie
         $alphaCamp = $alphaCampRepository->find($id);
 
         if (!$alphaCamp) {

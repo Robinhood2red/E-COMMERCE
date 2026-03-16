@@ -8,6 +8,8 @@ use App\Form\AddProductHistoryType;
 use App\Form\ProductType;
 use App\Form\ProductUpdateType;
 use App\Repository\AddProductHistoryRepository;
+use App\Repository\AlphaCampRepository;
+use App\Repository\CategorieRepository;
 use App\Repository\ProductRepository;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
@@ -77,12 +79,24 @@ final class ProductController extends AbstractController
 #endregion 
 #region SHOW
     #[Route('/{id}', name: 'app_product_show', methods: ['GET'])]
-    public function show(Product $product): Response
-    {
-        return $this->render('product/show.html.twig', [
-            'product' => $product,
-        ]);
+    public function show(Product $product, CategorieRepository $categorieRepository): Response {
+    
+    // récupère la collection des sous-catégories via la méthode exacte de votre entité
+    $subCategories = $product->getSubCategory();
+
+    // Le nom à afficher pour le current_filter
+    $currentFilter = "Détails Unité";
+    
+    if (!$subCategories->isEmpty()) {
+        $currentFilter = $subCategories->first()->getName();
     }
+
+    return $this->render('product/show.html.twig', [
+        'product' => $product,
+        'categories' => $categorieRepository->findAll(),
+        'current_filter' => $currentFilter,
+    ]);
+}
 #endregion
 #region EDIT
     #[Route('/{id}/edit', name: 'app_product_edit', methods: ['GET', 'POST'])]
