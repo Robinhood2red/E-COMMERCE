@@ -93,5 +93,18 @@
                 {% endif %}
             </ul>
         </div>
+        <li class="nav-item me-lg-3">
+            <a class="nav-link btn btn-outline-alpha d-flex align-items-center px-3{{ app.current_route == 'app_cart' ? 'active text-primary-alpha' }}" href="{{ path('app_cart') }}">
+                <i class="bi bi-cart3 text-primary-alpha me-2"></i>
+                <span class="text-uppercase ls-1 small fw-bold">PANIER</span>
+                
+                {% if app.session.get('panier')|length > 0 %}
+                    {# On ajoute d-inline-block pour stabiliser l'élément #}
+                    <span class="badge rounded-pill bg-primary-alpha text-dark ms-2 alpha-status-pulse">
+                        {{ app.session.get('panier')|length }}
+                    </span>
+                {% endif %}
+            </a>
+        </li>
     </div>
 </nav>

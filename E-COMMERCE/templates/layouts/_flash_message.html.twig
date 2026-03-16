@@ -1,8 +1,23 @@
-{% for type, messages in app.flashes(['success', 'danger', 'info']) %}
+{# templates/layouts/_flash_message.html.twig #}
+{% for label, messages in app.flashes %}
     {% for message in messages %}
-        <div class="col-md-12 mx-auto mt-2">
-            <div class="alert alert-{{ type }} alert-dismissible fade show">
-                {{ message }}
+        <div class="alert alert-{{ label == 'danger' ? 'danger' : (label == 'warning' ? 'warning' : 'success') }} 
+                    bg-dark-alpha border-alpha text-white mb-4 animate-pulse shadow-lg" role="alert">
+            <div class="d-flex align-items-center">
+                <div class="alpha-icon-box me-3" style="width: 35px; height: 35px; border-color: currentColor;">
+                    {% if label == 'success' %}
+                        <i class="bi bi-check-lg text-success"></i>
+                    {% elseif label == 'warning' %}
+                        <i class="bi bi-exclamation-triangle text-warning"></i>
+                    {% else %}
+                        <i class="bi bi-shield-exclamation text-danger"></i>
+                    {% endif %}
+                </div>
+                <div class="flex-grow-1">
+                    <b class="text-uppercase ls-1 small d-block" style="color: var(--alpha-gold);">Notification Système</b>
+                    <span class="italic small">{{ message }}</span>
+                </div>
+                <button type="button" class="btn-close btn-close-white small" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
     {% endfor %}

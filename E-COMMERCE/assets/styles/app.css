@@ -172,7 +172,7 @@ body {
     border: 1px solid rgba(255, 184, 0, 0.3)!important;
 }
 
-/* --- BOUTONS --- */
+/*! ------------------------ BOUTONS --------------------------------------- */
 .btn-alpha-action {
     background: var(--alpha-gold);
     color: black; /* Meilleur contraste sur du doré */
@@ -218,6 +218,25 @@ body {
 
 .transform-alpha-hover:hover .alpha-loader {
     width: 100%;
+}
+/* Variante blanche pour les contrôles tactiques */
+.btn-outline-alpha-white {
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #ffffff !important;
+    background: transparent;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-outline-alpha-white:hover {
+    border-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+}
+
+/* On s'assure que l'icône à l'intérieur est bien blanche aussi */
+.btn-outline-alpha-white i {
+    color: #ffffff !important;
 }
 /*! ---------------------------------- FOOTER -----------------------------------------*/
     .hover-gold:hover {
@@ -346,4 +365,29 @@ textarea.form-control {
     background-color: #111;
     border-color: #333;
     color: #444;
+}
+/*! ------------------------------------ PANIER NAVBAR ------------------------------------------ */
+/* Animation de pulsation tactique pour le badge */
+.alpha-status-pulse {
+    animation: alpha-glow 2s infinite;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: inline-block;
+    line-height: 1;
+    padding: 0.35em 0.65em;
+    vertical-align: middle;
+}
+
+@keyframes alpha-glow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(201, 149, 26, 0.7);
+        transform: scale(1);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(201, 149, 26, 0);
+        transform: scale(1.05);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(201, 149, 26, 0);
+        transform: scale(1);
+    }
 }

@@ -66,9 +66,10 @@
 
                 {# Actions avec boutons Alpha #}
                 <div class="d-grid gap-3 d-md-flex mt-5">
-                    <button class="btn btn-alpha-action btn-lg px-5 py-3 flex-grow-1 transform-hover">
-                        <i class="bi bi-cart-plus me-2"></i> AJOUTER À L'INVENTAIRE
-                    </button>
+                    <a href="{{ path('app_cart_add', {'id': product.id}) }}" 
+                        class="btn btn-alpha-action btn-lg px-5 py-3 flex-grow-1 transform-hover text-decoration-none d-flex align-items-center justify-content-center">
+                            <i class="bi bi-cart-plus me-2"></i> AJOUTER AU PANNIER
+                    </a>
                     <button class="btn btn-outline-danger btn-lg px-4 py-3 rounded-0 border-alpha transform-hover">
                         <i class="bi bi-heart-fill"></i>
                     </button>
