@@ -44,12 +44,12 @@
                             </div>
                         </div>
                     </div>
-                    
                     {# Barre décorative Alpha #}
                     <div class="alpha-loader"></div>
                 </div>
             </div>
         {% endfor %}
     </div>
+        {{ knp_pagination_render(products, 'layouts/_pagination_template.html.twig') }}
 </div>
 {% endblock %}

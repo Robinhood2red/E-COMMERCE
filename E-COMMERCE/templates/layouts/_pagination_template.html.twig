@@ -1,0 +1,43 @@
+{# templates/layouts/_pagination_template.html.twig #}
+{% if pageCount > 1 %}
+
+    <nav aria-label="Navigation Tactique" class="d-flex justify-content-center mt-5 alpha-pagination">
+        <ul class="pagination mb-0" style="gap: 10px;">
+            
+            {#* Précédent #}
+            {% if previous is defined %}
+                <li class="page-item">
+                    <a class="page-link alpha-link" href="{{ path(route, query|merge({(pageParameterName): previous})) }}">
+                        <i class="bi bi-chevron-left"></i>
+                    </a>
+                </li>
+            {% endif %}
+
+            {# Pages #}
+            {% for page in pagesInRange %}
+                <li class="page-item {% if page == current %}active{% endif %}">
+                    {% if page != current %}
+                    
+                        {#! Ce lien utilise le filtre 'merge' pour fusionner l'objet 'query' avec le nouveau numéro de page #}
+                        {#! Cela permet de naviguer sans perdre les paramètres de tri ou de recherche #}
+                        <a class="page-link alpha-link" href="{{ path(route, query|merge({(pageParameterName): page})) }}">
+                            {{ page }}
+                        </a>
+                    {% else %}
+                        <span class="page-link alpha-link-active">{{ page }}</span>
+                    {% endif %}
+                </li>
+            {% endfor %}
+
+            {#* Suivant #}
+            {% if next is defined %}
+                <li class="page-item">
+                    <a class="page-link alpha-link" href="{{ path(route, query|merge({(pageParameterName): next})) }}">
+                        <i class="bi bi-chevron-right"></i>
+                    </a>
+                </li>
+            {% endif %}
+            
+        </ul>
+    </nav>
+{% endif %}

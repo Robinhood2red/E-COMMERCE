@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use App\Entity\Categorie;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -36,6 +37,9 @@ class Product
 
     #[ORM\Column]
     private ?int $stock = null;
+
+    #[ORM\ManyToOne(targetEntity: Categorie::class, inversedBy: 'products')]
+    private ?Categorie $categorie = null;
 
     /**
      * @var Collection<int, AddProductHistory>
@@ -164,6 +168,18 @@ class Product
                 $quantity->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategorie(): ?Categorie
+    {
+        return $this->categorie;
+    }
+
+    public function setCategorie(?Categorie $categorie): static
+    {
+        $this->categorie = $categorie;
 
         return $this;
     }

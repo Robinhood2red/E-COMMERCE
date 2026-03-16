@@ -306,3 +306,44 @@ textarea.form-control {
 .form-control:hover {
     border-color: rgba(201, 149, 26, 0.5) !important;
 }
+/*! ------------------------------------ KNP ---------------------------------------- */
+/* Container de pagination Alpha */
+.alpha-pagination .pagination {
+    margin-top: 2rem;
+    gap: 8px;
+}
+
+/* Style de base des boutons */
+.alpha-pagination .page-item .page-link {
+    background-color: #000;
+    border: 1px solid #d4af37; /* Bordure dorée Alpha */
+    color: #d4af37;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif; /* Ou ta police actuelle */
+    padding: 10px 18px;
+    border-radius: 0; /* Carré pour le style militaire */
+    transition: all 0.3s ease;
+}
+
+/* État Survol (Hover) */
+.alpha-pagination .page-item .page-link:hover {
+    background-color: #d4af37;
+    color: #000;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+/* État Actif (Page en cours) */
+.alpha-pagination .page-item.active .page-link {
+    background-color: #d4af37;
+    color: #000;
+    border-color: #d4af37;
+    pointer-events: none;
+}
+
+/* État Désactivé (Précédent/Suivant quand inutile) */
+.alpha-pagination .page-item.disabled .page-link {
+    background-color: #111;
+    border-color: #333;
+    color: #444;
+}

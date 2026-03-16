@@ -6,17 +6,27 @@ use App\Entity\Product;
 use App\Repository\AlphaCampRepository;
 use App\Repository\CategorieRepository;
 use App\Repository\ProductRepository;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class HomePageController extends AbstractController
 {
 #[Route('/', name: 'app_home_page', methods: ['GET'])]
-    public function index(ProductRepository $productRepository, CategorieRepository $categorieRepository): Response
-    {
+public function index(ProductRepository $productRepository, CategorieRepository $categorieRepository,Request $request,PaginatorInterface $paginator): Response {
+        // Récupère la requête sql ou les données brutes 
+        $data = $productRepository->findBy([], ['id' => 'DESC']);
+
+        $pagination = $paginator->paginate(
+            $data,
+            $request->query->getInt('page', 1),
+            4 //! Max 8 articles
+        );
+
         return $this->render('home_page/index.html.twig', [
-            'products' => $productRepository->findAll(),
+            'products' => $pagination, 
             'categories' => $categorieRepository->findAll()
         ]);
     }
