@@ -10,7 +10,10 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class CartController extends AbstractController
 {
-    public function __construct(private readonly ProductRepository $productRepository) {}
+    public function __construct(private readonly ProductRepository $productRepository)
+    {
+
+    }
 
     #[Route('/cart', name: 'app_cart', methods: ['GET'])]
     public function index(SessionInterface $session): Response
@@ -42,7 +45,7 @@ final class CartController extends AbstractController
         $product = $this->productRepository->find($id);
 
         if (!$product) {
-            $this->addFlash('danger', 'Unité introuvable.');
+            $this->addFlash('danger', 'Produit introuvable.');
             return $this->redirectToRoute('app_home_page');
         }
 

@@ -32,9 +32,9 @@
                             <tr>
                                 <th>Désignation</th>
                                 <th class="text-center">Quantité</th>
-                                <th class="text-end">Crédits Unitaire</th>
+                                <th class="text-end">Prix Unitaire</th>
                                 <th class="text-end">Total</th>
-                                <th class="text-center">Action</th> {# Nouvelle colonne pour la suppression #}
+                                <th class="text-center">Supprimer</th> {#! Supprime la ligne #}
                             </tr>
                         </thead>
                         <tbody class="text-white">
@@ -100,7 +100,7 @@
                     <h4 class="text-white fw-black text-uppercase ls-2 mb-4">Rapport Logistique</h4>
                     
                     <div class="d-flex justify-content-between mb-2">
-                        <span class="text-secondary-alpha">Unités engagées :</span>
+                        <span class="text-secondary-alpha">Nombre d'article :</span>
                         <span class="text-white fw-bold">{{ items|length }}</span>
                     </div>
                     
