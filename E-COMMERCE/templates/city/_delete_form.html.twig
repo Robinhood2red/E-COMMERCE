@@ -1,4 +1,12 @@
-<form method="post" action="{{ path('app_city_delete', {'id': city.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
+<form method="post" action="{{ path('app_city_delete', {'id': city.id}) }}" onsubmit="return confirm('ALERTE : Confirmation requise pour la suppression définitive de cette zone logistique. Confirmer ?');" style="display: inline-block;">
     <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ city.id) }}">
-    <button class="btn">Delete</button>
+    
+    <button class="btn btn-link text-danger hover-gold text-uppercase ls-1 small fw-bold text-decoration-none p-0 transition-all">
+        <i class="bi bi-trash3-fill"></i>
+        
+        {# On n'affiche le span que si with_text est défini et vrai #}
+        {% if with_text is defined and with_text %}
+            <span class="ms-1">Supprimer</span>
+        {% endif %}
+    </button>
 </form>

@@ -1,13 +1,50 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit City{% endblock %}
+{% block title %}Alpha System : Modifier Ville{% endblock %}
 
 {% block body %}
-    <h1>Edit City</h1>
+<div class="container py-5">
+    {# En-tête avec l'identité visuelle Alpha #}
+    <div class="d-flex align-items-center gap-3 mb-5 border-bottom border-alpha pb-3">
+        <strong class="alpha-symbol fs-1">α</strong>
+        <div>
+            <h1 class="display-6 fw-black text-uppercase italic mb-0">Mise à jour Logistique</h1>
+            <small class="text-primary-alpha ls-2 uppercase">Modification de la zone : {{ city.name }}</small>
+        </div>
+    </div>
 
-    {{ include('city/_form.html.twig', {'button_label': 'Update'}) }}
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            {# Carte contenant le formulaire de modification #}
+            <div class="card bg-dark-alpha border-alpha rounded-0 p-4 shadow-lg mb-4">
+                <h4 class="text-white fw-black text-uppercase ls-1 mb-4">
+                    <i class="bi bi-pencil-square text-primary-alpha me-2"></i>Édition des paramètres
+                </h4>
 
-    <a href="{{ path('app_city_index') }}">back to list</a>
+                {# Inclusion du formulaire avec le label adapté #}
+                {{ include('city/_form.html.twig', {'button_label': 'METTRE À JOUR LA VILLE'}) }}
 
-    {{ include('city/_delete_form.html.twig') }}
+                <hr class="border-alpha opacity-25 my-4">
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="{{ path('app_city_index') }}" class="text-secondary-alpha text-decoration-none hover-gold small">
+                        <i class="bi bi-arrow-left me-1"></i> RETOUR À LA LISTE
+                    </a>
+
+                    {# Inclusion du bouton de suppression #}
+                    <div class="delete-action">
+                        {{ include('city/_delete_form.html.twig') }}
+                    </div>
+                </div>
+            </div>
+
+            {# Badge de statut pour l'ambiance #}
+            <div class="p-2 border border-danger bg-black bg-opacity-25 text-center mt-2">
+                <span class="text-danger small italic">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Attention : Toute modification impactera les calculs de livraison en temps réel.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

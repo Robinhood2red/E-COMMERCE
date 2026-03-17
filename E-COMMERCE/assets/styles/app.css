@@ -123,6 +123,17 @@ body {
     color: #fff !important;
 }
 
+/* Supprime la puce (la boule) indésirable */
+.navbar-nav .nav-item {
+    list-style: none !important;
+}
+
+/* Si c'est le pseudo-élément de Bootstrap qui bug */
+.dropdown-toggle::after {
+    vertical-align: middle !important;
+    margin-left: 0.255em;
+}
+
 /* --- SCROLL BAR (Thème Doré) --- */
 @property --p1 { syntax: '<percentage>'; inherits: true; initial-value: 5%; }
 @property --p2 { syntax: '<percentage>'; inherits: true; initial-value: 20%; }
@@ -160,6 +171,7 @@ body {
 .text-primary-alpha {
     color: var(--alpha-gold);
     text-shadow: 0 0 10px var(--alpha-gold-shadow);
+    list-style: none;
 }
 
 .text-secondary-alpha {
@@ -390,4 +402,50 @@ textarea.form-control {
         box-shadow: 0 0 0 0 rgba(201, 149, 26, 0);
         transform: scale(1);
     }
+}
+
+/*! ------------------------------------- ANIMATION BRILLANCE LOGO -------------------------------------------- */
+.logo-shine-wrapper {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    -webkit-mask-image: linear-gradient(black, black);
+    mask-image: linear-gradient(black, black);
+}
+
+/* Le reflet adouci */
+.logo-shine-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(
+        to right, 
+        rgba(255, 255, 255, 0) 0%, 
+        rgba(255, 255, 255, 0.05) 25%, /* Entrée très douce */
+        rgba(255, 255, 255, 0.5) 50%,  /* Point de brillance max */
+        rgba(255, 255, 255, 0.05) 75%, /* Sortie très douce */
+        rgba(255, 255, 255, 0) 100%
+    );
+    transform: skewX(-30deg);
+    filter: blur(10px); 
+    pointer-events: none;
+}
+
+/* Animation avec un timing plus naturel */
+.logo-shine-wrapper::before {
+    animation: shine-soft 4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes shine-soft {
+    0% { left: -150%; opacity: 0; }
+    5% { opacity: 1; } /* Apparition progressive */
+    20% { left: 150%; opacity: 1; }
+    25% { opacity: 0; } /* Disparition progressive en fin de course */
+    100% { left: 150%; opacity: 0; }
 }

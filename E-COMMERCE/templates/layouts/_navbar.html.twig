@@ -1,9 +1,11 @@
 <nav class="navbar navbar-expand-lg border-bottom border-alpha bg-dark-alpha shadow-lg" data-bs-theme='dark'>
     <div class="container">
         <a class="navbar-brand brand-alpha d-flex align-items-center" href="{{ path('app_home_page') }}">
-            <span class="alpha-symbol">α</span>
-            <span class="ms-1 text-white tracking-tighter">lpha</span>
-            <span class="shop-text fw-black text-primary-alpha ms-1">COMMANDO</span>
+            <div class="logo-shine-wrapper d-flex align-items-center">
+                <span class="alpha-symbol">α</span>
+                <span class="ms-1 text-white tracking-tighter">lpha</span>
+                <span class="shop-text fw-black text-primary-alpha ms-1">COMMANDO</span>
+            </div>
         </a>
 
         <button class="navbar-toggler border-alpha" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
@@ -52,6 +54,9 @@
                             <li><hr class="dropdown-divider border-alpha"></li>
                             <li class="dropdown-header text-secondary-alpha text-uppercase small">Unités</li>
                             <li><a class="dropdown-item" href="{{ path('app_user') }}"><i class="bi bi-people me-2"></i>Membres</a></li>
+                            <li><hr class="dropdown-divider border-alpha"></li>
+                            <li class="dropdown-header text-secondary-alpha text-uppercase small">Frais de port</li>
+                            <li><a class="dropdown-item" href="{{ path('app_city_index') }}"><i class="bi bi-people me-2"></i>Villes</a></li>
                         </ul>
                     </li>
                 {% endif %}
@@ -66,17 +71,17 @@
                 </div>
             </form>
 
-            <ul class="navbar-nav mb-2 mb-lg-0 align-items-center">
+            <ul class="navbar-nav mb-2 mb-lg-0 align-items-center list-unstyled">
                 {% if app.user %}
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle border-alpha px-3 text-white" href="#" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-cpu text-primary-alpha me-1"></i> {{ app.user.userIdentifier }}
+                        <a class="nav-link dropdown-toggle border-alpha px-3 text-white list-unstyled" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-cpu text-primary-alpha me-1 list-unstyled"></i> {{ app.user.userIdentifier }}
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end bg-dark-alpha border-alpha rounded-0">
                             {% if not is_granted("ROLE_ADMIN") %}
                                 <li><a class="dropdown-item" href="#">Mon Profil</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="{{ path('app_cart') }}">Mes Commandes</a></li> {#! FAIRE PAGE HISTORIQUE COMMANDE #}
+                            <li><a class="dropdown-item text-uppercase" href="{{ path('app_cart') }}">Mes Commandes</a></li> {#! FAIRE PAGE HISTORIQUE COMMANDE #}
                             <li><hr class="dropdown-divider border-alpha"></li>
                             <li><a class="dropdown-item text-danger text-uppercase fw-bold" href="{{ path('app_logout') }}">Déconnexion</a></li>
                         </ul>
@@ -86,7 +91,7 @@
                         <a class="nav-link text-uppercase ls-1" href="{{ path('app_login') }}">Se connecter</a>
                     </li>
                     <li class="nav-item ms-lg-2">
-                        <a class="btn btn-alpha-action px-4 py-2 rounded-0 text-uppercase fw-black" href="{{ path('app_register') }}">
+                        <a class="btn btn-alpha-action px-4 py-2 rounded-0 text-uppercase fw-black text-decoration-none" href="{{ path('app_register') }}">
                             S'inscrire
                         </a>
                     </li>

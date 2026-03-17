@@ -1,11 +1,45 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}New City{% endblock %}
+{% block title %}Alpha System : Nouvelle Ville{% endblock %}
 
 {% block body %}
-    <h1>Create new City</h1>
+<div class="container py-5">
+    {# En-tête avec l'identité visuelle Alpha #}
+    <div class="d-flex align-items-center gap-3 mb-5 border-bottom border-alpha pb-3">
+        <strong class="alpha-symbol fs-1">α</strong>
+        <div>
+            <h1 class="display-6 fw-black text-uppercase italic mb-0">Déploiement Logistique</h1>
+            <small class="text-primary-alpha ls-2 uppercase">Enregistrement d'une nouvelle zone de livraison</small>
+        </div>
+    </div>
 
-    {{ include('city/_form.html.twig') }}
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            {# Carte contenant le formulaire #}
+            <div class="card bg-dark-alpha border-alpha rounded-0 p-4 shadow-lg">
+                <h4 class="text-white fw-black text-uppercase ls-1 mb-4">
+                    <i class="bi bi-geo-alt-fill text-primary-alpha me-2"></i>Configuration Zone
+                </h4>
 
-    <a href="{{ path('app_city_index') }}">back to list</a>
+                {# Inclusion du formulaire que nous avons stylisé précédemment #}
+                {{ include('city/_form.html.twig', {'button_label': 'FORGER LA VILLE'}) }}
+
+                <hr class="border-alpha opacity-25 my-4">
+
+                <div class="text-center">
+                    <a href="{{ path('app_city_index') }}" class="text-secondary-alpha text-decoration-none hover-gold small">
+                        <i class="bi bi-arrow-left me-1"></i> ANNULER ET REVENIR À LA LISTE
+                    </a>
+                </div>
+            </div>
+
+            {# Petit avertissement système pour l'ambiance #}
+            <div class="mt-4 p-3 border border-alpha bg-black bg-opacity-25 text-center">
+                <span class="text-primary-alpha small italic">
+                    <i class="bi bi-info-circle me-2"></i>Note : Les frais de port seront appliqués à toutes les unités de cette zone.
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

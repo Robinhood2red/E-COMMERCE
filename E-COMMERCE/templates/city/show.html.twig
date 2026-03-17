@@ -1,30 +1,75 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}City{% endblock %}
+{% block title %}Logistique : Détails {{ city.name }}{% endblock %}
 
 {% block body %}
-    <h1>City</h1>
+<div class="container py-5">
+    {# En-tête Alpha #}
+    <div class="d-flex align-items-center gap-3 mb-5 border-bottom border-alpha pb-3">
+        <strong class="alpha-symbol fs-1">α</strong>
+        <div>
+            <h1 class="display-6 fw-black text-uppercase italic mb-0">Rapport de Zone</h1>
+            <small class="text-primary-alpha ls-2 uppercase">Données logistiques sécurisées</small>
+        </div>
+    </div>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ city.id }}</td>
-            </tr>
-            <tr>
-                <th>Name</th>
-                <td>{{ city.name }}</td>
-            </tr>
-            <tr>
-                <th>ShippingCost</th>
-                <td>{{ city.shippingCost }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="bg-dark-alpha border border-alpha p-4 shadow-lg position-relative overflow-hidden">
+                {# Filigrane Alpha en fond pour le style #}
+                <div class="position-absolute end-0 bottom-0 opacity-10" style="font-size: 10rem; transform: translate(20%, 20%); pointer-events: none;">
+                    <strong class="alpha-symbol">α</strong>
+                </div>
 
-    <a href="{{ path('app_city_index') }}">back to list</a>
+                <h4 class="text-white fw-black text-uppercase ls-1 mb-4 border-bottom border-secondary pb-2">
+                    <i class="bi bi-info-square text-primary-alpha me-2"></i>Fiche d'Information
+                </h4>
 
-    <a href="{{ path('app_city_edit', {'id': city.id}) }}">edit</a>
+                <div class="row g-4">
+                    {# Bloc ID #}
+                    <div class="col-md-4">
+                        <label class="text-secondary-alpha small text-uppercase ls-1 d-block">Identifiant</label>
+                        <span class="text-white fw-bold fs-5 italic">#{{ city.id }}</span>
+                    </div>
 
-    {{ include('city/_delete_form.html.twig') }}
+                    {# Bloc Nom #}
+                    <div class="col-md-4">
+                        <label class="text-secondary-alpha small text-uppercase ls-1 d-block">Désignation Zone</label>
+                        <span class="text-white fw-black fs-5 text-uppercase">{{ city.name }}</span>
+                    </div>
+
+                    {# Bloc Coût #}
+                    <div class="col-md-4">
+                        <label class="text-secondary-alpha small text-uppercase ls-1 d-block">Frais de transport</label>
+                        <span class="text-primary-alpha fw-black fs-5">{{ city.shippingCost|number_format(2, ',', ' ') }} €</span>
+                    </div>
+                </div>
+
+                <hr class="border-alpha opacity-25 my-4">
+
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div class="d-flex gap-3">
+                        <a href="{{ path('app_city_index') }}" class="btn btn-outline-alpha-white btn-sm text-uppercase ls-1">
+                            <i class="bi bi-arrow-left me-2"></i>Retour
+                        </a>
+                        <a href="{{ path('app_city_edit', {'id': city.id}) }}" class="btn btn-alpha-action btn-sm text-uppercase ls-1 px-4">
+                            <i class="bi bi-pencil-square me-2"></i>Modifier
+                        </a>
+                    </div>
+
+                    <div class="delete-wrapper">
+                        {{ include('city/_delete_form.html.twig', {'with_text': true}) }}
+                    </div>
+                </div>
+            </div>
+
+            {# Badge de validation système #}
+            <div class="mt-4 p-2 border border-alpha bg-black bg-opacity-25 text-center">
+                <span class="text-success small animate-pulse">
+                    <i class="bi bi-check2-circle me-2"></i>DONNÉES VÉRIFIÉES - PROTOCOLE ALPHA
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
