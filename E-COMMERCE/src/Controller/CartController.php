@@ -66,7 +66,7 @@ final class CartController extends AbstractController
         } else {
             $cart[$id] = $actualQuantity + 1;
             $session->set('cart', $cart);
-            $this->addFlash('success', 'Produit ajouté au cart.');
+            $this->addFlash('success', 'Produit ajouté au panier.');
         }
 
         return $this->redirectToRoute('app_cart');
@@ -83,7 +83,7 @@ final class CartController extends AbstractController
             } else {
                 unset($cart[$id]);
             }
-            $this->addFlash('info', 'cart mis à jour.');
+            $this->addFlash('info', 'Panier mis à jour.');
         }
 
         $session->set('cart', $cart);
@@ -97,10 +97,20 @@ final class CartController extends AbstractController
 
         if (!empty($cart[$id])) {
             unset($cart[$id]);
-            $this->addFlash('danger', 'Produit retirée de l\'inventaire.');
+            $this->addFlash('danger', 'Produit retirée du panier.');
         }
 
         $session->set('cart', $cart);
+        return $this->redirectToRoute('app_cart');
+    }
+    
+    #[Route('/cart/clear', name: 'app_cart_clear')] //! Suppression intégralité panier
+    public function clear(SessionInterface $session): Response
+    {
+        $session->remove('cart');
+
+        $this->addFlash('danger', 'Panier supprimé.');
+
         return $this->redirectToRoute('app_cart');
     }
 }
