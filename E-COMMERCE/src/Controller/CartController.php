@@ -9,7 +9,12 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 final class CartController extends AbstractController
-{
+{ 
+    //! le __construct sert à rendre le "magasin" (le ProductRepository) disponible partout dans le contrôleur 
+    //! Sans le constructeur, la variable $productRepository n'existerait pas à l'intérieur de ces fonctions. Le constructeur l'attache à l'objet via $this
+    //! Si tu n'avais pas ce __construct, tu serais obligé de demander le ProductRepository dans les arguments de chaque méthode individuellement, comme ceci :
+        //! public function index(ProductRepository $repo, SessionInterface $session)
+    //* Readonly = Indique que la propriété ne peut être modifiée qu'une seule fois (lors de l'initialisation).
     public function __construct(private readonly ProductRepository $productRepository)
     {
 
@@ -18,24 +23,27 @@ final class CartController extends AbstractController
     #[Route('/cart', name: 'app_cart', methods: ['GET'])]
     public function index(SessionInterface $session): Response
     {
-        $panier = $session->get('panier', []);
-        $panierEnrichi = [];
-        $total = 0;
+        $cart = $session->get('cart', []); //* [] stock les id et quantitée
+        $cartData = [];
+        $total = 0; //! Prix
+        $totalquantity = 0; //! Quantitée
 
-        foreach ($panier as $id => $quantite) {
-            $product = $this->productRepository->find($id);
-            if ($product) {
-                $panierEnrichi[] = [
+        foreach ($cart as $id => $quantity) {
+            $product = $this->productRepository->find($id); //* Récup l'id et toutes les info auxquelles elle est ratachée // $this->ON UTILISE LE CONSTRUCT
+            if ($product) { 
+                $cartData[] = [
                     'produit' => $product,
-                    'quantite' => $quantite
+                    'quantite' => $quantity
                 ];
-                $total += $product->getPrice() * $quantite;
+                $total += $product->getPrice() * $quantity;
+                $totalquantity += $quantity; // On additionne chaque quantité (diférent produits et similaires)
             }
         }
 
         return $this->render('cart/index.html.twig', [
-            'items' => $panierEnrichi,
-            'total' => $total
+            'items' => $cartData,
+            'total' => $total,
+            'totalQuantite' => $totalquantity 
         ]);
     }
 
@@ -49,16 +57,16 @@ final class CartController extends AbstractController
             return $this->redirectToRoute('app_home_page');
         }
 
-        $panier = $session->get('panier', []);
-        $quantiteActuelle = $panier[$id] ?? 0;
+        $cart = $session->get('cart', []);
+        $actualQuantity = $cart[$id] ?? 0; //. ?? = L'opérateur de coalescence nulle //! Si $cart[id] ?EXISTE? Sinon 0
 
         //! Vérification par rapport au stock de l'entité Product
-        if ($quantiteActuelle >= $product->getStock()) {
+        if ($actualQuantity >= $product->getStock()) {
             $this->addFlash('warning', 'Alerte : Stock maximum atteint.');
         } else {
-            $panier[$id] = $quantiteActuelle + 1;
-            $session->set('panier', $panier);
-            $this->addFlash('success', 'Produit ajouté au panier.');
+            $cart[$id] = $actualQuantity + 1;
+            $session->set('cart', $cart);
+            $this->addFlash('success', 'Produit ajouté au cart.');
         }
 
         return $this->redirectToRoute('app_cart');
@@ -67,32 +75,32 @@ final class CartController extends AbstractController
     #[Route('/cart/remove/{id}', name: 'app_cart_remove')]
     public function remove(int $id, SessionInterface $session): Response
     {
-        $panier = $session->get('panier', []);
+        $cart = $session->get('cart', []);
 
-        if (!empty($panier[$id])) {
-            if ($panier[$id] > 1) {
-                $panier[$id]--;
+        if (!empty($cart[$id])) {
+            if ($cart[$id] > 1) {
+                $cart[$id]--;
             } else {
-                unset($panier[$id]);
+                unset($cart[$id]);
             }
-            $this->addFlash('info', 'Panier mis à jour.');
+            $this->addFlash('info', 'cart mis à jour.');
         }
 
-        $session->set('panier', $panier);
+        $session->set('cart', $cart);
         return $this->redirectToRoute('app_cart');
     }
 
     #[Route('/cart/delete/{id}', name: 'app_cart_delete')]
     public function delete(int $id, SessionInterface $session): Response
     {
-        $panier = $session->get('panier', []);
+        $cart = $session->get('cart', []);
 
-        if (!empty($panier[$id])) {
-            unset($panier[$id]);
+        if (!empty($cart[$id])) {
+            unset($cart[$id]);
             $this->addFlash('danger', 'Produit retirée de l\'inventaire.');
         }
 
-        $session->set('panier', $panier);
+        $session->set('cart', $cart);
         return $this->redirectToRoute('app_cart');
     }
 }

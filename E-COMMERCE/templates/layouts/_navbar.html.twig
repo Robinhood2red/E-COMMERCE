@@ -76,7 +76,7 @@
                             {% if not is_granted("ROLE_ADMIN") %}
                                 <li><a class="dropdown-item" href="#">Mon Profil</a></li>
                             {% endif %}
-                            <li><a class="dropdown-item" href="#">Mes Commandes</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_cart') }}">Mes Commandes</a></li> {#! FAIRE PAGE HISTORIQUE COMMANDE #}
                             <li><hr class="dropdown-divider border-alpha"></li>
                             <li><a class="dropdown-item text-danger text-uppercase fw-bold" href="{{ path('app_logout') }}">Déconnexion</a></li>
                         </ul>
@@ -87,21 +87,21 @@
                     </li>
                     <li class="nav-item ms-lg-2">
                         <a class="btn btn-alpha-action px-4 py-2 rounded-0 text-uppercase fw-black" href="{{ path('app_register') }}">
-                            S'enrôler
+                            S'inscrire
                         </a>
                     </li>
                 {% endif %}
             </ul>
         </div>
-        <li class="nav-item me-lg-3">
+        <li class="nav-item me-lg-3 ps-3">
             <a class="nav-link btn btn-outline-alpha d-flex align-items-center px-3{{ app.current_route == 'app_cart' ? 'active text-primary-alpha' }}" href="{{ path('app_cart') }}">
                 <i class="bi bi-cart3 text-primary-alpha me-2"></i>
                 <span class="text-uppercase ls-1 small fw-bold">PANIER</span>
                 
-                {% if app.session.get('panier')|length > 0 %}
+                {% if app.session.get('cart')|length > 0 %}
                     {# On ajoute d-inline-block pour stabiliser l'élément #}
                     <span class="badge rounded-pill bg-primary-alpha text-dark ms-2 alpha-status-pulse">
-                        {{ app.session.get('panier')|length }}
+                        {{ app.session.get('cart')|length }}
                     </span>
                 {% endif %}
             </a>

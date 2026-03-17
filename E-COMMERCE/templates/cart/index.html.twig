@@ -19,7 +19,7 @@
             <h3 class="text-white text-uppercase ls-2">Aucune produit détectée</h3>
             <p class="text-secondary-alpha italic">Votre panier est actuellement vide.</p>
             <a href="{{ path('app_home_page') }}" class="btn btn-alpha-action mt-3 transform-hover">
-                RETOUR à l'accueil
+                RETOUR À L'ACCUEIL
             </a>
         </div>
     {% else %}
@@ -101,7 +101,7 @@
                     
                     <div class="d-flex justify-content-between mb-2">
                         <span class="text-secondary-alpha">Nombre d'article :</span>
-                        <span class="text-white fw-bold">{{ items|length }}</span>
+                        <span class="text-white fw-bold">{{ totalQuantite }}</span>
                     </div>
                     
                     <hr class="border-alpha opacity-25">
