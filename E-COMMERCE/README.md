@@ -13,6 +13,9 @@ php bin/console make:entity 'name'
 CRéE CRUD
 php bin/console make:crud 'NameEntity'
 
+VOIR TOUT MES DOCS
+php bin/console debug:router
+
 php -S localhost:8000 -t public
 
 Ma sous catégorie = alpha_camp
