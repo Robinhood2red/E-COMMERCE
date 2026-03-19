@@ -67,17 +67,24 @@ class OrderController extends AbstractController
     /*
      * Cette route est appelée par JavaScript (Fetch). 
      * Elle reçoit l'ID d'une ville et renvoie son prix au format JSON.*/
-    #[Route('/get-shipping-cost/{id}', name: 'app_shipping_cost', methods: ['GET'])]
+    // #[Route('/get-shipping-cost/{id}', name: 'app_shipping_cost', methods: ['GET'])]
+    // public function getShippingCost(?City $city): JsonResponse
+    // {
+    //     // Si la ville n'existe pas (choix vide) = 0
+    //     if (!$city) {
+    //         return new JsonResponse(['cost' => 0]);
+    //     }
+
+    //     //! Renvoie un objet JSON : indispensable pour le js 
+    //     return new JsonResponse([
+    //         'cost' => $city->getShippingCost() // Utilise la propriété de l'entité City
+    //     ]);
+    // }
+     #[Route('/get-shipping-cost/{id}', name: 'app_shipping_cost', methods: ['GET'])]
     public function getShippingCost(?City $city): JsonResponse
     {
-        // Si la ville n'existe pas (choix vide), renvoie 0
-        if (!$city) {
-            return new JsonResponse(['cost' => 0]);
-        }
+       $cityShippingPrice = $city->getShippingCost();
 
-        // On renvoie un objet JSON : indispensable pour le js 
-        return new JsonResponse([
-            'cost' => $city->getShippingCost() // Utilise la propriété de l'entité City
-        ]);
+       return new Response($cityShippingPrice);
     }
 }
