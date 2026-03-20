@@ -80,11 +80,13 @@ class OrderController extends AbstractController
     //         'cost' => $city->getShippingCost() // Utilise la propriété de l'entité City
     //     ]);
     // }
-     #[Route('/get-shipping-cost/{id}', name: 'app_shipping_cost', methods: ['GET'])]
+    #[Route('/get-shipping-cost/{id}', name: 'app_shipping_cost', methods: ['GET'])]
     public function getShippingCost(?City $city): JsonResponse
     {
-       $cityShippingPrice = $city->getShippingCost();
+        $cityShippingPrice = $city ? $city->getShippingCost() : 0;
 
-       return new Response($cityShippingPrice);
+        return $this->json([
+            'shipping_cost' => $cityShippingPrice
+        ]);
     }
 }
