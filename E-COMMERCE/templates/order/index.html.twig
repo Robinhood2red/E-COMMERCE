@@ -64,6 +64,7 @@
                 </h4>
 
                 <div class="d-flex justify-content-between mb-2">
+                    <span id="card-price">{{ total_items }}</span>
                     <span class="text-secondary-alpha">Articles :</span>
                     <span class="text-white fw-bold">{{ totalQuantite }}</span>
                 </div>
@@ -75,9 +76,10 @@
 
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <span class="text-white fw-black text-uppercase">Total estimé</span>
-                    <span class="fs-4 fw-black text-primary-alpha">
+                    <span class="fs-4 fw-black text-primary-alpha total-price">
                         {# Calcul temporaire du total (avec de port) #}
                         {{ total_items|number_format(2, ',', ' ') }} €
+                        
                     </span>
                 </div>
             </div>
@@ -114,9 +116,15 @@ $(document).ready(function() {
         type: 'GET',
         success: function(response) {
         const newResponse = JSON.parse(response)
+        
         if (parseInt(newResponse.status) === 200) {
             console.log(newResponse.status)
             $("#shipping-cost").text(newResponse.content)
+
+            const cardPrice = parseInt($('#card-price').text());
+            const shippingCost = parseInt($('#shipping-cost').text());
+            $('.total-price').text(cardPrice + shippingCost);
+            console.log(cardPrice + shippingCost)
         }
         },
         error: function(xhr, status, error) {

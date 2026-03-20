@@ -81,12 +81,10 @@ class OrderController extends AbstractController
     //     ]);
     // }
     #[Route('/get-shipping-cost/{id}', name: 'app_shipping_cost', methods: ['GET'])]
-    public function getShippingCost(?City $city): JsonResponse
+    public function getShippingCost(?City $city): Response
     {
-        $cityShippingPrice = $city ? $city->getShippingCost() : 0;
+        $cityShippingPrice = $city->getShippingCost();
 
-        return $this->json([
-            'shipping_cost' => $cityShippingPrice
-        ]);
+       return new Response(json_encode(['status'=>200, "message"=>'on', 'content'=> $cityShippingPrice]));
     }
 }
