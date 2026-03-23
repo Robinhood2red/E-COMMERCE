@@ -16,7 +16,7 @@
         {# État vide avec style terminal #}
         <div class="text-center py-5 border border-alpha bg-dark-alpha">
             <i class="bi bi-exclamation-triangle text-primary-alpha display-1 mb-3"></i>
-            <h3 class="text-white text-uppercase ls-2">Aucun produit détectée</h3>
+            <h3 class="text-white text-uppercase ls-2">Aucun product détectée</h3>
             <p class="text-secondary-alpha italic">Votre panier est actuellement vide.</p>
             <a href="{{ path('app_home_page') }}" class="btn btn-alpha-action mt-3 transform-hover">
                 RETOUR À L'ACCUEIL
@@ -42,14 +42,14 @@
                                 <tr class="border-bottom border-secondary">
                                     <td class="py-3">
                                         <div class="d-flex align-items-center gap-3">
-                                            <img src="{{ asset('/images/' ~ item.produit.images) }}" 
-                                                alt="{{ item.produit.name }}" 
+                                            <img src="{{ asset('/images/' ~ item.product.images) }}" 
+                                                alt="{{ item.product.name }}" 
                                                 style="width: 50px; height: 50px; object-fit: cover;"
                                                 class="border border-alpha">
                                             <div>
-                                                <span class="fw-bold d-block">{{ item.produit.name|upper }}</span>
+                                                <span class="fw-bold d-block">{{ item.product.name|upper }}</span>
                                                 <span class="text-secondary-alpha x-small italic" style="font-size: 0.7rem;">
-                                                    ID: #{{ item.produit.id }}
+                                                    ID: #{{ item.product.id }}
                                                 </span>
                                             </div>
                                         </div>
@@ -58,26 +58,26 @@
                                     {# Gestion des quantités avec boutons plus/moins #}
                                     <td class="text-center fw-black">
                                         <div class="d-flex align-items-center justify-content-center gap-2">
-                                            <a href="{{ path('app_cart_remove', {'id': item.produit.id}) }}" class="btn btn-sm btn-outline-alpha-white p-1" style="line-height: 1;">
+                                            <a href="{{ path('app_cart_remove', {'id': item.product.id}) }}" class="btn btn-sm btn-outline-alpha-white p-1" style="line-height: 1;">
                                                 <i class="bi bi-dash"></i>
                                             </a>
                                             
-                                            <span class="mx-1">{{ item.quantite }}</span>
+                                            <span class="mx-1">{{ item.qte }}</span>
                                             
-                                            <a href="{{ path('app_cart_add', {'id': item.produit.id}) }}" class="btn btn-sm btn-outline-alpha-white p-1" style="line-height: 1;">
+                                            <a href="{{ path('app_cart_add', {'id': item.product.id}) }}" class="btn btn-sm btn-outline-alpha-white p-1" style="line-height: 1;">
                                                 <i class="bi bi-plus"></i>
                                             </a>
                                         </div>
                                     </td>
 
-                                    <td class="text-end">{{ item.produit.price }} €</td>
+                                    <td class="text-end">{{ item.product.price }} €</td>
                                     <td class="text-end text-primary-alpha fw-bold">
-                                        {{ item.produit.price * item.quantite }} €
+                                        {{ item.product.price * item.qte }} €
                                     </td>
 
                                     {# Bouton de suppression totale de la ligne #}
                                     <td class="text-center">
-                                        <a href="{{ path('app_city_delete', {'id': item.produit.id}) }}" class="text-danger hover-gold opacity-75">
+                                        <a href="{{ path('app_city_delete', {'id': item.product.id}) }}" class="text-danger hover-gold opacity-75">
                                             <i class="bi bi-trash3-fill"></i>
                                         </a>
                                     </td>

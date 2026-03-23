@@ -12,7 +12,6 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
 #[Route('/order')]
@@ -49,32 +48,41 @@ class OrderController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0; // Calcul selon la city
- 
-            $order->setTotalPrice($total + $shipping); //* TOTAL
-            $order->setCreatedAt(new \DateTimeImmutable()); //* DATE
+            
+            // Vérification payOneDelivery est coché
+            if ($order->isPayOnDelivery()) {
 
-            $this->entityManager->persist($order);
+                // Calcul des frais de port selon la city choisie
+                $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
 
-            // Transformation de chaque élément du panier en entité de liaison OrderProducts
-            foreach ($cartData as $item) {
-                $orderProduct = new OrderProducts();
-                $orderProduct->setOrder($order); //* Association avec la commande parente
-                $orderProduct->setProduct($item['product']); //* Liaison vers l'entité Produit
-                $orderProduct->setQte($item['qte']); //* Définition de la quantité achetée
-                
-                // Préparation de l'enregistrement sql
-                $this->entityManager->persist($orderProduct);
+                $order->setTotalPrice($total + $shipping); // Commande + fraits de livraison
+                $order->setCreatedAt(new \DateTimeImmutable()); // Ajout date de commande
+
+                $this->entityManager->persist($order);
+
+                foreach ($cartData as $item) {
+                    $orderProduct = new OrderProducts();
+                    $orderProduct->setOrder($order);
+                    $orderProduct->setProduct($item['product']);
+                    $orderProduct->setQte($item['qte']);
+
+                    $this->entityManager->persist($orderProduct);
+                }
+
+                // Envoie en bdd
+                $this->entityManager->flush();
+
+                $request->getSession()->remove('cart');
+                $this->addFlash('success', 'Commande Alpha enregistrée (Paiement à la livraison).');
+
+                return $this->redirectToRoute('app_order_message', [
+                    'id' => $order->getId()
+                ]);
+            } else {
+                $this->addFlash('warning', 'Veuillez cocher Paiement à la livraison.');
+
+                return $this->redirectToRoute('app_order');
             }
-
-            // Envoie des requêtes sql
-            $this->entityManager->flush();
-
-            // Vide le panier
-            $request->getSession()->remove('cart');
-
-            $this->addFlash('success', 'Commande Alpha enregistrée.');
-            return $this->redirectToRoute('app_home_page'); 
         }
 
         return $this->render('order/index.html.twig', [
@@ -109,5 +117,14 @@ class OrderController extends AbstractController
         $cityShippingPrice = $city->getShippingCost();
 
        return new Response(json_encode(['status'=>200, "message"=>'on', 'content'=> $cityShippingPrice]));
+    }
+
+    #[Route('/order_message/{id}', name: 'app_order_message')]
+    public function orderMesage(Order $order): Response
+    {
+       return $this->render('order/message.html.twig', [
+        'order' => $order
+       ]); 
+       
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\ProductRepository;
+use App\Service\Cart;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -15,7 +16,7 @@ final class CartController extends AbstractController
     //! Si tu n'avais pas ce __construct, tu serais obligé de demander le ProductRepository dans les arguments de chaque méthode individuellement, comme ceci :
         //! public function index(ProductRepository $repo, SessionInterface $session)
     //* Readonly = Indique que la propriété ne peut être modifiée qu'une seule fois (lors de l'initialisation).
-    public function __construct(private readonly ProductRepository $productRepository)
+    public function __construct(private readonly ProductRepository $productRepository, private readonly Cart $cartService)
     {
 
     }
@@ -23,27 +24,19 @@ final class CartController extends AbstractController
     #[Route('/cart', name: 'app_cart', methods: ['GET'])]
     public function index(SessionInterface $session): Response
     {
-        $cart = $session->get('cart', []); //* [] stock les id et quantitée
-        $cartData = [];
-        $total = 0; //! Prix
-        $totalquantity = 0; //! Quantitée
+        // Appel de la méthode du service (selon ta capture d'écran)
+        $data = $this->cartService->getFullCart($session);
 
-        foreach ($cart as $id => $quantity) {
-            $product = $this->productRepository->find($id); //* Récup l'id et toutes les info auxquelles elle est ratachée // $this->ON UTILISE LE CONSTRUCT
-            if ($product) { 
-                $cartData[] = [
-                    'produit' => $product,
-                    'quantite' => $quantity
-                ];
-                $total += $product->getPrice() * $quantity;
-                $totalquantity += $quantity; // On additionne chaque quantité (diférent produits et similaires)
-            }
+        // Recalcul de la quantité totale si le service ne la renvoie pas encore
+        $totalQuantity = 0;
+        foreach ($data['cart'] as $item) {
+            $totalQuantity += $item['qte'];
         }
 
         return $this->render('cart/index.html.twig', [
-            'items' => $cartData,
-            'total' => $total,
-            'totalQuantite' => $totalquantity 
+            'items' => $data['cart'],   // La clé 'cart' vient de ton service
+            'total' => $data['total'],  // La clé 'total' vient de ton service
+            'totalQuantite' => $totalQuantity 
         ]);
     }
 
