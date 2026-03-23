@@ -66,12 +66,12 @@
                 <div class="d-flex justify-content-between mb-2">
                     
                     <span class="text-secondary-alpha">Articles :</span>
-                    <span class="text-white fw-bold">{{ totalQuantite }}</span>
+                    <span class="text-white fw-bold">{{ totalQuantite }} €</span>
                 </div>
 
                  <div class="d-flex justify-content-between mb-2">
                     <span class="text-secondary-alpha">Montant commande :</span>
-                    <span id="card-price" class="text-white fw-bold">{{ total_items }}</span>
+                    <span id="card-price" class="text-white fw-bold">{{ total_items }} €</span>
                 </div>
 
                 <div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-3">
@@ -114,7 +114,7 @@ $(document).ready(function() {
 
     const url = `/order/get-shipping-cost/${cityValue}`;
 
-    //requete ajax
+    //----------- requete ajax ------------
     function ajaxRequest(url) {
     $.ajax({
         url: url,
@@ -128,8 +128,12 @@ $(document).ready(function() {
 
             const cardPrice = parseInt($('#card-price').text());
             const shippingCost = parseInt($('#shipping-cost').text());
-            $('.total-price').text(cardPrice + shippingCost);
-            console.log(cardPrice + shippingCost)
+
+            const total = cardPrice + shippingCost;
+
+            const formattedPrice = total.toFixed(2).replace('.', ','); // FORMAT
+            $('.total-price').text(formattedPrice + " €");
+            console.log(formattedPrice)
         }
         },
         error: function(xhr, status, error) {
