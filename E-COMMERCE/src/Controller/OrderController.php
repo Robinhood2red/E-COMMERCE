@@ -6,6 +6,7 @@ use App\Entity\City;
 use App\Entity\Order;
 use App\Form\OrderType;
 use App\Repository\ProductRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,9 +17,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class OrderController extends AbstractController
 {
     //* Utilisation du constructeur pour injecter le repository, comme dans CartController
-    public function __construct(private readonly ProductRepository $productRepository)
+    public function __construct(private readonly ProductRepository $productRepository, private readonly EntityManagerInterface $entityManager)
     {
-
+        
     }
     
     #[Route(name: 'app_order')]
@@ -50,18 +51,37 @@ class OrderController extends AbstractController
         $form = $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
 
+        // 2. Gestion de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
-            //* Logique de sauvegarde à venir
+            
+            // Récupération des frais de port via la ville choisie dans le formulaire
+            $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+
+            // Remplissage de l'entité Order avant envoi
+            $order->setTotal($total + $shipping); // Vérifie que setTotal() existe dans Order.php
+            $order->setCreatedAt(new \DateTimeImmutable());
+
+            // ENVOI EN BDD
+            $this->entityManager->persist($order);
+            $this->entityManager->flush();
+
+            // Nettoyage
+            $session->remove('cart');
+            $this->addFlash('success', 'Commande Alpha enregistrée.');
+
             return $this->redirectToRoute('app_home_page'); 
         }
 
         return $this->render('order/index.html.twig', [
             'form' => $form->createView(),
-            'cart_data' => $cartData, //! -----> Pour lister les produits si besoin <-----
-            'total_items' => $total,   //! TOTAL PRIX
-            'totalQuantite' => $totalquantity
+            'total_items' => $total,
+            'totalQuantite' => $totalquantity,
+            'cart_data' => $cartData
         ]);
+    
     }
+
+
     
     /*
      * Cette route est appelée par JavaScript (Fetch). 

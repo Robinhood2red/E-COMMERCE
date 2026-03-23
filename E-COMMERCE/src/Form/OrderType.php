@@ -40,6 +40,9 @@ class OrderType extends AbstractType
                 'required' => false, //* Comme ça pas obligatoire
                 'attr' => ['class' => 'bg-dark text-white border-alpha']
             ])
+            ->add('payOnDelivery', null, [
+                'label'=>'Payez à la livraison',
+            ])
         ;
     }
 
