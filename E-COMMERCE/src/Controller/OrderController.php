@@ -4,8 +4,10 @@ namespace App\Controller;
 
 use App\Entity\City;
 use App\Entity\Order;
+use App\Entity\OrderProducts;
 use App\Form\OrderType;
 use App\Repository\ProductRepository;
+use App\Service\Cart;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,68 +19,70 @@ use Symfony\Component\Routing\Attribute\Route;
 class OrderController extends AbstractController
 {
     //* Utilisation du constructeur pour injecter le repository, comme dans CartController
-    public function __construct(private readonly ProductRepository $productRepository, private readonly EntityManagerInterface $entityManager)
+    public function __construct(private readonly ProductRepository $productRepository, private readonly EntityManagerInterface $entityManager, private readonly Cart $cartService)
     {
-        
+
     }
     
     #[Route(name: 'app_order')]
-    public function index(Request $request, SessionInterface $session): Response
+    public function index(Request $request): Response
     {
-        //! Récupération du panier brut (IDs et quantités)
-        $cart = $session->get('cart', []);
-        
-        $cartData = [];
-        $total = 0;
-        $totalquantity = 0; //! Quantitée
+        // Récupération des données avec CartService
+        $fullCart = $this->cartService->getFullCart();
+        $cartData = $fullCart['cart'];
+        $total = $fullCart['total'];
 
-        //! Transformation des données pour Twig comme dans CartController
-        foreach ($cart as $id => $quantity) {
-            $product = $this->productRepository->find($id);
-            if ($product) {
-                $cartData[] = [
-                    'product' => $product,
-                    'quantity' => $quantity
-                ];
-                // Calcul du prix total des articles
-                $total += $product->getPrice() * $quantity;
-                $totalquantity += $quantity;
-            }
+        // Calcul quantités
+        $totalQuantity = 0;
+        foreach ($cartData as $item) {
+            $totalQuantity += $item['qte'];
         }
 
-        //* Formulaire Order
+        // Si vide --> Panier
+        if (empty($cartData)) {
+            return $this->redirectToRoute('app_cart');
+        }
+
+        // Préparation entity
         $order = new Order();
         $form = $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
 
-        // 2. Gestion de la soumission
         if ($form->isSubmitted() && $form->isValid()) {
-            
-            // Récupération des frais de port via la ville choisie dans le formulaire
-            $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+            $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0; // Calcul selon la city
+ 
+            $order->setTotalPrice($total + $shipping); //* TOTAL
+            $order->setCreatedAt(new \DateTimeImmutable()); //* DATE
 
-            // Remplissage de l'entité Order avant envoi
-            $order->setTotal($total + $shipping); // Vérifie que setTotal() existe dans Order.php
-            $order->setCreatedAt(new \DateTimeImmutable());
-
-            // ENVOI EN BDD
             $this->entityManager->persist($order);
+
+            // Transformation de chaque élément du panier en entité de liaison OrderProducts
+            foreach ($cartData as $item) {
+                $orderProduct = new OrderProducts();
+                $orderProduct->setOrder($order); //* Association avec la commande parente
+                $orderProduct->setProduct($item['product']); //* Liaison vers l'entité Produit
+                $orderProduct->setQte($item['qte']); //* Définition de la quantité achetée
+                
+                // Préparation de l'enregistrement sql
+                $this->entityManager->persist($orderProduct);
+            }
+
+            // Envoie des requêtes sql
             $this->entityManager->flush();
 
-            // Nettoyage
-            $session->remove('cart');
-            $this->addFlash('success', 'Commande Alpha enregistrée.');
+            // Vide le panier
+            $request->getSession()->remove('cart');
 
+            $this->addFlash('success', 'Commande Alpha enregistrée.');
             return $this->redirectToRoute('app_home_page'); 
         }
 
         return $this->render('order/index.html.twig', [
             'form' => $form->createView(),
             'total_items' => $total,
-            'totalQuantite' => $totalquantity,
+            'totalQuantite' => $totalQuantity,
             'cart_data' => $cartData
         ]);
-    
     }
 
 
