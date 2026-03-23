@@ -6,13 +6,16 @@ use App\Entity\City;
 use App\Entity\Order;
 use App\Entity\OrderProducts;
 use App\Form\OrderType;
+use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Service\Cart;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/order')]
 class OrderController extends AbstractController
@@ -126,5 +129,38 @@ class OrderController extends AbstractController
         'order' => $order
        ]); 
        
+    }
+
+    #[Route('/editor/show', name: 'app_order_message_show')]
+    #[IsGranted('ROLE_EDITOR')]
+    public function getAllOrder(OrderRepository $orderRepository, PaginatorInterface $paginator, Request $request): Response
+    {
+        // On récupère une requête (Query) et non plus directement les résultats
+        $query = $orderRepository->createQueryBuilder('o')
+            ->orderBy('o.id', 'DESC')
+            ->getQuery();
+
+        // Pagination comme pour homepage
+        $orders = $paginator->paginate(
+            $query,
+            $request->query->getInt('page', 1), //* on commence à la page 1 / Grace à orderBy ce sera la dernière commande
+            3 // nombre d'éléments par page
+        );
+
+        return $this->render('order/order.html.twig', [
+            'orders' => $orders
+        ]); 
+    }
+    #[Route('/editor/delete/{id}', name: 'app_order_delete', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_EDITOR')]
+    public function deleteOrder(Order $order): Response
+    {
+
+        $this->entityManager->remove($order);
+        $this->entityManager->flush();
+
+        $this->addFlash('success', 'La commande a bien été supprimée !');
+
+        return $this->redirectToRoute('app_order_message_show');
     }
 }

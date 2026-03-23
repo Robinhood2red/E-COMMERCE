@@ -1,0 +1,136 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Alpha System : Gestion des Commandes{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+{% include 'layouts/_flash_message.html.twig' %}
+    {# En-tête style Alpha #}
+    <div class="d-flex align-items-center gap-3 mb-5 border-bottom border-alpha pb-3">
+        <strong class="alpha-symbol fs-1">α</strong>
+        <div>
+            <h1 class="display-6 fw-black text-uppercase italic mb-0">Base de Données des Commandes</h1>
+            <small class="text-primary-alpha ls-2 uppercase">Consultation des protocoles d'acquisition</small>
+        </div>
+    </div>
+
+    {# Liste des commandes #}
+    {% if orders is empty %}
+        <div class="alert alert-dark border-alpha rounded-0 text-center py-5">
+            <i class="bi bi-excursion text-secondary-alpha fs-1 d-block mb-3"></i>
+            <span class="text-white fw-bold italic text-uppercase">Aucune donnée de commande détectée dans le système.</span>
+        </div>
+    {% else %}
+        {% for order in orders %}
+            <div class="card bg-dark-alpha border-alpha rounded-0 p-4 shadow-lg mb-5 position-relative">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 class="text-white fw-black text-uppercase ls-1 mb-0">
+                        <i class="bi bi-hash text-primary-alpha"></i> Commande ID : {{ order.id }}
+                    </h5>
+                    <span class="badge bg-primary-alpha rounded-0 text-uppercase italic">Status : Enregistré</span>
+                </div>
+
+                {# TABLE 1 : Infos Client #}
+                <div class="table-responsive mb-4">
+                    <table class="table table-bordered border-secondary text-white align-middle">
+                        <thead class="bg-black text-secondary-alpha small text-uppercase">
+                            <tr>
+                                <th class="border-secondary">Nom</th>
+                                <th class="border-secondary">Prénom</th>
+                                <th class="border-secondary">Téléphone</th>
+                                <th class="border-secondary">Adresse</th>
+                                <th class="border-secondary">Ville</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="bg-transparent">
+                                <td class="border-secondary">{{ order.lastName }}</td>
+                                <td class="border-secondary">{{ order.firstName }}</td>
+                                <td class="border-secondary">{{ order.phone }}</td>
+                                <td class="border-secondary">{{ order.address }}</td>
+                                <td class="border-secondary text-primary-alpha fw-bold italic">
+                                    {{ order.city.name|default('N/A') }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                {# TABLE 2 : Corps de la commande (Produits avec images) #}
+                <h5 class="text-primary-alpha fw-bold text-uppercase small ls-1 mb-3">Corps de la commande</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered border-secondary text-white align-middle">
+                        <thead class="bg-black text-secondary-alpha small text-uppercase">
+                            <tr>
+                                <th class="border-secondary" style="width: 100px;">Aperçu</th>
+                                <th class="border-secondary">Nom du produit</th>
+                                <th class="border-secondary">Prix unitaire</th>
+                                <th class="border-secondary">Quantité</th>
+                                <th class="border-secondary">Prix total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for productItem in order.orderProducts %}
+                                <tr class="bg-transparent">
+                                    <td class="border-secondary p-1 text-center">
+
+                                        <img src="{{ asset('/images/' ~ productItem.product.images) }}" 
+                                             class="img-fluid border border-secondary" 
+                                             style="max-height: 65px;" 
+                                             alt="{{ productItem.product.name }}">
+                                    </td>
+                                    <td class="border-secondary">{{ productItem.product.name }}</td>
+                                    <td class="border-secondary">{{ productItem.product.price|number_format(2, ',', ' ') }} €</td>
+                                    <td class="border-secondary">{{ productItem.qte }}</td>
+                                    <td class="border-secondary text-primary-alpha">
+                                        {{ (productItem.product.price * productItem.qte)|number_format(2, ',', ' ') }} €
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                {# Pied de carte : Financier + Actions #}
+                <div class="mt-4 border-top border-secondary pt-3">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            
+                            <div class="d-flex gap-2">
+                                <a href="#" class="btn btn-outline-primary btn-sm rounded-0 text-uppercase fw-bold italic">
+                                    <i class="bi bi-check2-circle me-1"></i> Marquer comme livrée
+                                </a>
+                                <a href="{{ path('app_order_delete', {'id': order.id}) }}" class="btn btn-danger btn-sm rounded-0 text-uppercase fw-bold italic" 
+                                   onclick="return confirm('Confirmer la suppression du protocole ?')">
+                                    <i class="bi bi-trash3 me-1"></i> Supprimer la commande
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6 text-end">
+                            <span class="text-secondary-alpha uppercase small">
+                                Frais de livraisons : <strong>{{ order.city.shippingCost|default(0) }} €</strong>
+                            </span>
+                            <h5 class="text-white fw-black text-uppercase italic mt-1">
+                                Total à payer : <span class="text-primary-alpha">{{ order.totalPrice|number_format(2, ',', ' ') }} €</span>
+                            </h5>
+                        </div>
+                    </div>
+                </div>
+                {# Barre décorative Alpha comme sur la home #}
+                <div class="alpha-loader mt-3" style="position: relative; height: 2px;"></div>
+            </div>
+            <hr class="border-secondary my-5">
+        {% endfor %}
+
+        <div class="d-flex justify-content-center mt-5">
+            {{ knp_pagination_render(orders, 'layouts/_pagination_template.html.twig') }}
+        </div>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{{ path('app_home_page') }}" class="text-secondary-alpha text-decoration-none hover-gold small">
+            <i class="bi bi-arrow-left me-1"></i> RETOUR À L'ACCUEIL
+        </a>
+    </div>
+</div>
+{% endblock %}
