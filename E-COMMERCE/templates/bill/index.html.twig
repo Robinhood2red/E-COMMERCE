@@ -1,9 +1,9 @@
+
 {% extends 'base.html.twig' %}
 
 {% block title %}Facture - Commande #{{ order.id }}{% endblock %}
-
 {% block body %}
-<style> {#! ----------------------- CSS POUR IMPRESSION PROPRE ------------------------- #}
+<style> {#! ----------------------- CSS POUR IMPRESSION NAVIGATEUR ------------------------- #}
     @media print {
         /* Masquer les éléments inutiles (Navigation, Boutons, Flash messages) */
         nav, footer, .d-print-none, .alert, .btn {
@@ -43,6 +43,7 @@
         }
     }
 </style>
+
 <div class="container py-5">
 {% include 'layouts/_flash_message.html.twig' %}
     {# Bouton de retour et impression #}
@@ -145,3 +146,205 @@
     </div>
 </div>
 {% endblock %}
+
+{# ! ALTERNATIVE pour page pdf complète --> COMMENTER {% extends 'base.html.twig' %} #}
+{# <!DOCTYPE html> #}
+{# <html> #}
+{# <head>
+    <meta charset="UTF-8">
+    <title>Facture Alpha COMMANDO #{{ order.id }}</title>
+    <style>
+        /* Configuration de la page PDF */
+        @page {
+            margin: 0cm;
+        }
+        body {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 12px;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Conteneur principal */
+        .invoice-box {
+            max-width: 800px;
+            margin: auto;
+            padding: 30px;
+            background-color: #fff;
+        }
+
+        /* En-tête */
+        .header {
+            border-bottom: 2px solid #000;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header table {
+            width: 100%;
+        }
+        .brand {
+            font-size: 28px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-style: italic;
+        }
+        .brand .gold {
+            color: #D4AF37;
+        }
+        .invoice-title {
+            text-align: right;
+            text-transform: uppercase;
+        }
+
+        /* Infos Client / Société */
+        .info-section {
+            width: 100%;
+            margin-bottom: 40px;
+        }
+        .info-section td {
+            width: 50%;
+            vertical-align: top;
+        }
+        .section-label {
+            text-transform: uppercase;
+            font-size: 10px;
+            color: #777;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* Tableau des produits */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+        .items-table thead {
+            background-color: #000;
+            color: #fff;
+        }
+        .items-table th {
+            text-transform: uppercase;
+            font-size: 11px;
+            padding: 10px;
+            text-align: left;
+        }
+        .items-table td {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .text-center { text-align: center; }
+        .text-right { text-align: right; }
+
+        /* Totaux */
+        .totals {
+            width: 100%;
+        }
+        .totals table {
+            width: 250px;
+            margin-left: auto;
+            border-collapse: collapse;
+        }
+        .totals td {
+            padding: 5px 10px;
+        }
+        .total-row {
+            background-color: #f9f9f9;
+            font-weight: bold;
+            font-size: 16px;
+        }
+        .total-gold {
+            color: #D4AF37;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-style: italic;
+            color: #999;
+            font-size: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="invoice-box">
+        <div class="header">
+            <table>
+                <tr>
+                    <td class="brand">
+                        ALPHA <span class="gold">COMMANDO</span>
+                        <div style="font-size: 10px; color: #777; font-style: normal; margin-top: 5px;">
+                            Protocole d'acquisition officiel
+                        </div>
+                    </td>
+                    <td class="invoice-title">
+                        <h2 style="margin: 0;">Facture #{{ order.id }}</h2>
+                        <p style="margin: 5px 0 0 0;">Date : {{ order.createdAt|date('d/m/Y') }}</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table class="info-section">
+            <tr>
+                <td>
+                    <div class="section-label">Émetteur</div>
+                    <strong>Alpha COMMANDO</strong><br>
+                    5 rue du dominant<br>
+                    33000 Bordeaux, France
+                </td>
+                <td class="text-right">
+                    <div class="section-label">Destinataire</div>
+                    <strong>{{ order.firstName|upper }} {{ order.lastName|upper }}</strong><br>
+                    {{ order.address }}<br>
+                    {{ order.city.name|upper }}<br>
+                    Tél : {{ order.phone }}
+                </td>
+            </tr>
+        </table>
+
+        <table class="items-table">
+            <thead>
+                <tr>
+                    <th>Désignation</th>
+                    <th class="text-center">Prix Unitaire</th>
+                    <th class="text-center">Qté</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.orderProducts %}
+                <tr>
+                    <td><strong>{{ item.product.name }}</strong></td>
+                    <td class="text-center">{{ item.product.price|number_format(2, ',', ' ') }} €</td>
+                    <td class="text-center">{{ item.qte }}</td>
+                    <td class="text-right">{{ (item.product.price * item.qte)|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <table>
+                <tr>
+                    <td>Livraison</td>
+                    <td class="text-right">{{ order.city.shippingCost|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                <tr class="total-row">
+                    <td>TOTAL TTC</td>
+                    <td class="text-right total-gold">{{ order.totalPrice|number_format(2, ',', ' ') }} €</td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="footer">
+            <p>Merci d'avoir choisi Alpha System pour vos protocoles technologiques.</p>
+            <p>Alpha COMMANDO - SIRET 123 456 789 00012</p>
+        </div>
+    </div>
+</body> #}
+{# </html> #}
