@@ -13,8 +13,28 @@
             <small class="text-primary-alpha ls-2 uppercase">Consultation des protocoles d'acquisition</small>
         </div>
     </div>
-
-    {# Liste des commandes #}
+    {#! FILTRE PAR DATE #}
+    <div class="bg-dark-alpha border-alpha p-3 mb-5">
+        <form method="get" class="row g-3 align-items-end">
+            <div class="col-md-4">
+                <label for="filter_date" class="text-primary-alpha small uppercase ls-1 mb-2 d-block">Filtrer par date de protocole</label>
+                <input type="date" name="filter_date" id="filter_date" 
+                    class="form-control bg-black border-secondary text-white rounded-0"
+                    value="{{ currentDate }}">
+            </div>
+            <div class="col-md-4">
+                <button type="submit" class="btn btn-outline-primary rounded-0 text-uppercase fw-bold italic w-100">
+                    <i class="bi bi-filter-left me-2"></i> Appliquer le filtre
+                </button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ path('app_order_message_show') }}" class="btn btn-outline-secondary rounded-0 text-uppercase small w-100">
+                    Réinitialiser
+                </a>
+            </div>
+        </form>
+    </div>
+    {#! Liste des commandes #}
     {% if orders is empty %}
         <div class="alert alert-dark border-alpha rounded-0 text-center py-5">
             <i class="bi bi-excursion text-secondary-alpha fs-1 d-block mb-3"></i>
@@ -27,7 +47,11 @@
                     <h5 class="text-white fw-black text-uppercase ls-1 mb-0">
                         <i class="bi bi-hash text-primary-alpha"></i> Commande ID : {{ order.id }}
                     </h5>
-                    <span class="badge bg-primary-alpha rounded-0 text-uppercase italic">Status : Enregistré</span>
+                    {% if order.isCompleted ==true %}
+                        <span class='text-success fw-bold'>| Commande livrée |</span>
+                    {% else %}
+                        <span class="text-danger fw-bold">| Commande non livrée |</span>
+                    {% endif %}
                 </div>
 
                 {# TABLE 1 : Infos Client #}
@@ -40,6 +64,7 @@
                                 <th class="border-secondary">Téléphone</th>
                                 <th class="border-secondary">Adresse</th>
                                 <th class="border-secondary">Ville</th>
+                                <th class="border-secondary">Date de la commande</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -50,6 +75,7 @@
                                 <td class="border-secondary">{{ order.address }}</td>
                                 <td class="border-secondary text-primary-alpha fw-bold italic">
                                     {{ order.city.name|default('N/A') }}
+                                <td class="border-secondary">{{ order.createdAt|date('d/m/Y') }}</td>
                                 </td>
                             </tr>
                         </tbody>

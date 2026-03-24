@@ -135,20 +135,34 @@ class OrderController extends AbstractController
     #[IsGranted('ROLE_EDITOR')]
     public function getAllOrder(OrderRepository $orderRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        // On récupère une requête (Query) et non plus directement les résultats
-        $query = $orderRepository->createQueryBuilder('o')
-            ->orderBy('o.id', 'DESC')
-            ->getQuery();
+        // Préparation filtre par date
+        $filterDate = $request->query->get('filter_date');
 
-        // Pagination comme pour homepage
+        // QueryBuilder
+        $queryBuilder = $orderRepository->createQueryBuilder('o')
+            ->orderBy('o.id', 'DESC');
+
+        // Si une date est demandée, alors filtre
+        if ($filterDate) {
+            $date = new \DateTime($filterDate);
+            
+            $queryBuilder->andWhere('o.createdAt >= :start') // condition WHERE
+                        ->andWhere('o.createdAt <= :end') // start et end sont des placeholders
+                        ->setParameter('start', $date->format('Y-m-d 00:00:00')) //* J'ai enlevé les heures sur le twig
+                        ->setParameter('end', $date->format('Y-m-d 23:59:59')); //* 23h à minuit pour englober la journée entière
+        }
+
+        $query = $queryBuilder->getQuery();
+
         $orders = $paginator->paginate(
             $query,
-            $request->query->getInt('page', 1), //* on commence à la page 1 / Grace à orderBy ce sera la dernière commande
-            3 // nombre d'éléments par page
+            $request->query->getInt('page', 1),
+            3
         );
 
         return $this->render('order/order.html.twig', [
-            'orders' => $orders
+            'orders' => $orders,
+            'currentDate' => $filterDate
         ]); 
     }
     #[Route('/editor/delete/{id}', name: 'app_order_delete', methods: ['GET', 'POST'])]
