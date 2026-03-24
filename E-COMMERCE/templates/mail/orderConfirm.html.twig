@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* Styles de base pour la compatibilité mail */
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            line-height: 1.6; 
+            color: #222222; 
+            margin: 0; 
+            padding: 0; 
+            background-color: #f4f4f4;
+        }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f4f4f4; padding-bottom: 40px; }
+        .main { 
+            background-color: #ffffff; 
+            max-width: 600px; 
+            margin: 0 auto; 
+            border: 1px solid #dddddd;
+        }
+        .header { 
+            background-color: #000000; 
+            color: #D4AF37; 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { 
+            margin: 0; 
+            text-transform: uppercase; 
+            letter-spacing: 4px; 
+            font-style: italic; 
+            font-weight: 900;
+        }
+        .content { padding: 40px 30px; }
+        .order-id { 
+            font-weight: bold; 
+            color: #D4AF37; 
+            font-size: 1.2rem;
+        }
+        .table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .table th { 
+            text-align: left; 
+            border-bottom: 2px solid #000; 
+            padding: 10px; 
+            text-transform: uppercase; 
+            font-size: 12px;
+        }
+        .table td { padding: 10px; border-bottom: 1px solid #eeeeee; }
+        .total-section { margin-top: 20px; text-align: right; }
+        .total-row { font-size: 18px; font-weight: bold; color: #000; }
+        .footer { 
+            text-align: center; 
+            padding: 20px; 
+            font-size: 12px; 
+            color: #888888; 
+        }
+        .btn-alpha {
+            display: inline-block;
+            padding: 12px 25px;
+            background-color: #000;
+            color: #D4AF37 !important;
+            text-decoration: none;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-style: italic;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="main">
+            <div class="header">
+                <h1>ALPHA <span style="color: #ffffff;">SYSTEM</span></h1>
+            </div>
+
+            <div class="content">
+                <h2 style="margin-top: 0;">Confirmation de Protocole</h2>
+                <p>Bonjour <strong>{{ order.firstName }} {{ order.lastName }}</strong>,</p>
+                <p>Votre commande <span class="order-id">#{{ order.id }}</span> a été enregistrée avec succès dans nos systèmes.</p>
+                
+                <p><strong>Récapitulatif de votre acquisition :</strong></p>
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Produit</th>
+                            <th style="text-align: center;">Qté</th>
+                            <th style="text-align: right;">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in order.orderProducts %}
+                        <tr>
+                            <td>{{ item.product.name }}</td>
+                            <td style="text-align: center;">{{ item.qte }}</td>
+                            <td style="text-align: right;">{{ (item.product.price * item.qte)|number_format(2, ',', ' ') }} €</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="total-section">
+                    <p style="margin-bottom: 5px;">Frais de livraison : {{ order.city.shippingCost|number_format(2, ',', ' ') }} €</p>
+                    <p class="total-row">TOTAL TTC : <span style="color: #D4AF37;">{{ order.totalPrice|number_format(2, ',', ' ') }} €</span></p>
+                </div>
+
+                <div style="margin-top: 30px; border-top: 1px dashed #ccc; padding-top: 20px;">
+                    <p><strong>Adresse de livraison :</strong><br>
+                    {{ order.address }}<br>
+                    {{ order.city.name }}</p>
+                    
+                    <p><strong>Méthode de paiement :</strong><br>
+                    Paiement à la livraison</p>
+                </div>
+
+                <div style="text-align: center;">
+                    <a href="{{ url('app_order_message', {id: order.id}) }}" class="btn-alpha">Suivre ma commande</a>
+                </div>
+            </div>
+
+            <div class="footer">
+                <p>&copy; {{ "now"|date("Y") }} Alpha System - Protocole Commando.<br>
+                Ceci est un message automatique, merci de ne pas y répondre.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

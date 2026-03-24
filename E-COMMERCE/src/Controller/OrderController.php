@@ -14,6 +14,8 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
@@ -21,7 +23,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class OrderController extends AbstractController
 {
     //* Utilisation du constructeur pour injecter le repository, comme dans CartController
-    public function __construct(private readonly ProductRepository $productRepository, private readonly EntityManagerInterface $entityManager, private readonly Cart $cartService)
+    public function __construct(private readonly ProductRepository $productRepository, private readonly EntityManagerInterface $entityManager, private readonly Cart $cartService, private readonly MailerInterface $mailer)
     {
 
     }
@@ -75,8 +77,21 @@ class OrderController extends AbstractController
                 // Envoie en bdd
                 $this->entityManager->flush();
 
+                // Préparation du contenu HTML du mail
+                $html = $this->renderView('mail/orderConfirm.html.twig', [
+                    'order' => $order
+                ]);
+
+                // Création et configuration de l'e-mail
+                $email = (new Email())
+                    ->from('noreply@alpha-system.com')
+                    ->to('louisboutetcamille@gmail.com') //! Voir si possible d'envoyer au mail user connecté
+                    ->subject('Confirmation de votre commande Alpha COMMANDO #' . $order->getId())
+                    ->html($html);
+                    $this->mailer->send($email); //* Envoi du mail
+
                 $request->getSession()->remove('cart');
-                $this->addFlash('success', 'Commande Alpha enregistrée (Paiement à la livraison).');
+                $this->addFlash('success', 'Commande enregistrée et mail de confirmation envoyé.');
 
                 return $this->redirectToRoute('app_order_message', [
                     'id' => $order->getId()
@@ -165,6 +180,22 @@ class OrderController extends AbstractController
             'currentDate' => $filterDate
         ]); 
     }
+
+    #[Route('/editor/is-completed/update/{id}', name: 'app_order_is-completed-update', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_EDITOR')]
+    public function isColpletedUpdate($id, OrderRepository $orderRepository, EntityManagerInterface $entityManager): Response
+    {
+
+        $order = $orderRepository->find($id);
+        $order->setIscompleted(true);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Modification effectuée !');
+
+        return $this->redirectToRoute('app_order_message_show');
+    }
+
+
     #[Route('/editor/delete/{id}', name: 'app_order_delete', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_EDITOR')]
     public function deleteOrder(Order $order): Response
@@ -177,4 +208,6 @@ class OrderController extends AbstractController
 
         return $this->redirectToRoute('app_order_message_show');
     }
+
+
 }

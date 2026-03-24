@@ -26,7 +26,12 @@ class OrderType extends AbstractType
             ])
             ->add('phone', TelType::class, [
                 'label' => 'Téléphone',
-                'attr' => ['placeholder' => '06...']
+                'attr' => [
+                    'placeholder' => '06...',
+                    'maxlength' => '10', // Bloque physiquement à 10 caractères
+                    'pattern' => '[0-9]{10}', // HTML5 : impose exactement 10 chiffres
+                    'oninput' => "this.value = this.value.replace(/[^0-9]/g, '');" // JS bloque tout ce qui n'est pas un n°
+                    ]
             ])
             ->add('address', TextType::class, [
                 'label' => 'Adresse de livraison',
@@ -37,7 +42,7 @@ class OrderType extends AbstractType
                 'choice_label' => 'name',
                 'label' => 'Zone Logistique',
                 'placeholder' => 'Choisir ma ville (ou retrait magasin)',
-                'required' => false, //* Comme ça pas obligatoire
+                'required' => true, //* Comme ça pas obligatoire
                 'attr' => ['class' => 'bg-dark text-white border-alpha']
             ])
             ->add('payOnDelivery', null, [

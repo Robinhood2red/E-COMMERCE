@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Facture - Commande #{{ order.id }}{% endblock %}
+
+{% block body %}
+<style> {#! ----------------------- CSS POUR IMPRESSION PROPRE ------------------------- #}
+    @media print {
+        /* Masquer les éléments inutiles (Navigation, Boutons, Flash messages) */
+        nav, footer, .d-print-none, .alert, .btn {
+            display: none !important;
+        }
+
+        /* Supprimer les marges par défaut de la page et forcer le plein écran */
+        body {
+            background-color: white !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Ajuster le conteneur de la facture */
+        .container {
+            width: 100% !important;
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Enlever les ombres portées qui consomment de l'encre et nuisent au rendu */
+        .shadow-lg {
+            box-shadow: none !important;
+        }
+
+        /* Forcer les couleurs (certains navigateurs masquent les couleurs de fond par défaut) */
+        .bg-dark {
+            background-color: #000 !important;
+            color: #fff !important;
+            -webkit-print-color-adjust: exact;
+        }
+        
+        .text-primary-alpha {
+            color: #D4AF37 !important; /* Remplace par ta couleur or exacte */
+            -webkit-print-color-adjust: exact;
+        }
+    }
+</style>
+<div class="container py-5">
+{% include 'layouts/_flash_message.html.twig' %}
+    {# Bouton de retour et impression #}
+    <div class="d-flex justify-content-between align-items-center mb-4 d-print-none">
+        <a href="{{ path('app_order_message_show') }}" class="text-secondary-alpha text-decoration-none small">
+            <i class="bi bi-arrow-left me-1"></i> RETOUR AUX COMMANDES
+        </a>
+        <button onclick="window.print()" class="btn btn-outline-primary btn-sm rounded-0 italic fw-bold">
+            <i class="bi bi-printer me-2"></i> IMPRIMER LA FACTURE
+        </button>
+    </div>
+
+    <div class="bg-white text-dark p-5 shadow-lg border border-dark">
+        {# En-tête de la facture #}
+        <div class="row mb-5 border-bottom border-dark pb-4">
+            <div class="col-6">
+                <h1 class="display-5 fw-black text-uppercase italic mb-0">ALPHA <span class="text-primary-alpha">COMMANDO</span></h1>
+                <p class="small text-muted mb-0">Protocole d'acquisition officiel</p>
+            </div>
+            <div class="col-6 text-end">
+                <h2 class="h4 fw-bold text-uppercase">Facture #{{ order.id }}</h2>
+                <p class="mb-0">Date : <strong>{{ order.createdAt|date('d/m/Y H:i') }}</strong></p>
+            </div>
+        </div>
+
+        {# Infos Client & Société #}
+        <div class="row mb-5">
+            <div class="col-6">
+                <p class="text-uppercase small fw-bold text-muted mb-2">Émetteur</p>
+                <p class="mb-0"><strong>Alpha COMMANDO</strong></p>
+                <p class="mb-0">5 rue du dominant</p>
+                <p class="mb-0">33000 Bordeaux, France</p>
+            </div>
+            <div class="col-6 text-end">
+                <p class="text-uppercase small fw-bold text-muted mb-3 border-bottom border-light pb-2">
+                    <i class="bi bi-person-badge me-1"></i> Destinataire
+                </p>
+
+                <p class="mb-2 text-uppercase fw-black italic">
+                    <strong>{{ order.firstName }} {{ order.lastName }}</strong>
+                </p>
+
+                <p class="mb-1 small">
+                    <span class="text-muted text-uppercase x-small fw-bold d-block">Localisation :</span>
+                    <i class="bi bi-geo-alt-fill text-primary-alpha"></i> {{ order.address }}
+                </p>
+
+                <p class="mb-3 small fw-bold text-uppercase italic">
+                    {{ order.city.name }}
+                </p>
+
+                <div class="mb-2 text-uppercase fw-black italic">
+                    <span class="x-small text-uppercase d-block mb-1">Contact du destinataire</span>
+                    <i class="bi bi-telephone-fill small me-1"></i> 
+                    <span class="fw-bold">{{ order.phone }}</span>
+                </div>
+            </div>
+        </div>
+
+        {# Tableau des produits #}
+        <table class="table table-bordered border-dark mb-4">
+            <thead class="bg-dark text-white">
+                <tr>
+                    <th class="text-uppercase small">Désignation du produit</th>
+                    <th class="text-center text-uppercase small" style="width: 150px;">Prix Unitaire</th>
+                    <th class="text-center text-uppercase small" style="width: 100px;">Qté</th>
+                    <th class="text-end text-uppercase small" style="width: 150px;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in order.orderProducts %}
+                <tr>
+                    <td class="fw-bold">{{ item.product.name }}</td>
+                    <td class="text-center">{{ item.product.price|number_format(2, ',', ' ') }} €</td>
+                    <td class="text-center">{{ item.qte }}</td>
+                    <td class="text-end fw-bold">{{ (item.product.price * item.qte)|number_format(2, ',', ' ') }} €</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {# Totaux #}
+        <div class="row justify-content-end">
+            <div class="col-md-5">
+                <div class="d-flex justify-content-between mb-2">
+                    <span class="text-uppercase small">Frais de livraison :</span>
+                    <span>{{ order.city.shippingCost|default(0) }} €</span>
+                </div>
+                <div class="d-flex justify-content-between border-top border-dark pt-2">
+                    <h4 class="fw-black text-uppercase italic">Total TTC :</h4>
+                    <h4 class="fw-black text-primary-alpha">{{ order.totalPrice|number_format(2, ',', ' ') }} €</h4>
+                </div>
+            </div>
+        </div>
+
+        {# Pied de page facture #}
+        <div class="mt-5 pt-5 text-center border-top border-light">
+            <p class="small text-muted italic">Merci d'avoir choisi Alpha System pour vos protocoles technologiques.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -121,16 +121,22 @@
                 <div class="mt-4 border-top border-secondary pt-3">
                     <div class="row align-items-center">
                         <div class="col-md-6">
-                            
+
                             <div class="d-flex gap-2">
-                                <a href="#" class="btn btn-outline-primary btn-sm rounded-0 text-uppercase fw-bold italic">
+                            {% if order.isCompleted !=true %}
+                                <a href="{{ path('app_order_is-completed-update', {'id': order.id}) }}" class="btn btn-outline-primary btn-sm rounded-0 text-uppercase fw-bold italic">
                                     <i class="bi bi-check2-circle me-1"></i> Marquer comme livrée
                                 </a>
                                 <a href="{{ path('app_order_delete', {'id': order.id}) }}" class="btn btn-danger btn-sm rounded-0 text-uppercase fw-bold italic" 
-                                   onclick="return confirm('Confirmer la suppression du protocole ?')">
+                                   onclick="return confirm('Confirmer la suppression de la commande ?')">
                                     <i class="bi bi-trash3 me-1"></i> Supprimer la commande
                                 </a>
+                            {% endif %}
+                                <a href="{{ path('app_bill', {'id': order.id}) }}" class="btn btn-alpha-action btn-sm rounded-0 text-uppercase fw-bold italic">
+                                    <i class="bi bi-file-earmark-pdf me-1"></i> Générer Facture
+                                </a>
                             </div>
+                            
                         </div>
                         <div class="col-md-6 text-end">
                             <span class="text-secondary-alpha uppercase small">
