@@ -82,3 +82,46 @@ https://www.youtube.com/shorts/izwW9mYZjtY
     });
     </script>
 {% endblock %}
+
+
+
+script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script
+
+$(document).ready(function() {
+    const citySelector = $('#order_city'); // nom_du_formulaire + _ + nom_du_champ. // $builder->add('city', ...)
+    const cityValue = citySelector.val();
+
+    const url = `/order/get-shipping-cost/${cityValue}`;
+
+    //----------- requete ajax ------------
+    function ajaxRequest(url) {
+    $.ajax({
+        url: url,
+        type: 'GET',
+        success: function(response) {
+        const newResponse = JSON.parse(response)
+        
+        if (parseInt(newResponse.status) === 200) {
+            console.log(newResponse.status)
+            $("#shipping-cost").text(newResponse.content)
+
+            const cardPrice = parseInt($('#card-price').text());
+            const shippingCost = parseInt($('#shipping-cost').text());
+
+            const total = cardPrice + shippingCost;
+
+            const formattedPrice = total.toFixed(2).replace('.', ','); // FORMAT
+            $('.total-price').text(formattedPrice + " €");
+            console.log(formattedPrice)
+        }
+        },
+        error: function(xhr, status, error) {
+
+        }
+    })
+    }
+    citySelector.on('change', function() {
+        const urlUpdate = `/order/get-shipping-cost/${$(this).val()}`;
+        ajaxRequest(urlUpdate)
+    });
+})

@@ -31,8 +31,7 @@ class OrderType extends AbstractType
                 'mapped' => !$options['data']->getEmail() ? true : false,
                 'attr' => [
                     'placeholder' => 'ex: rambo@alpha.com',
-                    //* aide visuelle
-                    'class' => 'email-field' 
+                    'class' => 'email-field' //* aide visuelle
                 ]
             ])
             ->add('phone', TelType::class, [

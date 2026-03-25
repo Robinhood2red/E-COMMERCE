@@ -9,6 +9,7 @@ use App\Form\OrderType;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Service\Cart;
+use App\Service\StripePayment;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,9 +33,9 @@ class OrderController extends AbstractController
     public function index(Request $request): Response
     {
         // Récupération des données du panier
-        $fullCart = $this->cartService->getFullCart();
-        $cartData = $fullCart['cart'];
-        $total = $fullCart['total'];
+        $data = $this->cartService->getFullCart();
+        $cartData = $data['cart'];
+        $total = $data['total'];
 
         if (empty($cartData)) {
             return $this->redirectToRoute('app_cart');
@@ -109,8 +110,38 @@ class OrderController extends AbstractController
 
                 return $this->redirectToRoute('app_order_message', ['id' => $order->getId()]);
             } else {
-                $this->addFlash('warning', 'Veuillez cocher Paiement à la livraison.');
-                return $this->redirectToRoute('app_order');
+
+                if ($this->getUser()) {
+                    $order->setEmail($this->getUser()->getUserIdentifier());
+                }
+
+                $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+                $order->setTotalPrice($total + $shipping);
+                $order->setCreatedAt(new \DateTimeImmutable());
+                $order->setPayOnDelivery(false); // On précise que ce n'est pas à la livraison
+
+                $this->entityManager->persist($order);
+
+                // Ajout des produits à la commande
+                foreach ($cartData as $item) {
+                    $orderProduct = new OrderProducts();
+                    $orderProduct->setProduct($item['product']);
+                    $orderProduct->setQte($item['qte']);
+                    $order->addOrderProduct($orderProduct); 
+                    $this->entityManager->persist($orderProduct);
+                }
+
+                $this->entityManager->flush();
+
+                $paymentStripe = new StripePayment(); // Initialisation du paiement Stripe
+                
+                $shippingCost = $order->getCity()->getShippingCost(); // On récupère les frais de port
+       
+                $paymentStripe->startPayment($data, $shippingCost, $order->getId()); // On lance le paiement en passant l'ID de la commande qu'on vient de créer
+
+                $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
+
+                return $this->redirect($stripeRedirectUrl);
             }
         }
 

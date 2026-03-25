@@ -22,7 +22,7 @@
                     <i class="bi bi-truck text-primary-alpha me-2"></i>Coordonnées de Livraison
                 </h4>
                 
-                {{ form_start(form) }}
+                {{ form_start(form, {'attr': {'data-turbo': 'false'}}) }}
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label class="text-secondary-alpha small text-uppercase ls-1">Prénom</label>
@@ -119,48 +119,63 @@
 </div>
 
 {#! ----------------- JavaScript -------------------- #}
-<script src="https://code.jquery.com/jquery-4.0.0.min.js" integrity="sha256-OaVG6prZf4v69dPg6PhVattBXkcOWQB62pdZ3ORyrao=" crossorigin="anonymous"></script>
-<script>
-$(document).ready(function() {
-    const citySelector = $('#order_city'); // nom_du_formulaire + _ + nom_du_champ. // $builder->add('city', ...)
-    const cityValue = citySelector.val();
 
-    const url = `/order/get-shipping-cost/${cityValue}`;
-
-    //----------- requete ajax ------------
-    function ajaxRequest(url) {
-    $.ajax({
-        url: url,
-        type: 'GET',
-        success: function(response) {
-        const newResponse = JSON.parse(response)
+{% block javascripts %}
+    {{ parent() }}
+    
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. On cible les éléments
+        const citySelect = document.getElementById('order_city');
+        const shippingDisplay = document.getElementById('shipping-cost');
+        const totalDisplay = document.querySelector('.total-price'); // Plus précis avec ta classe
         
-        if (parseInt(newResponse.status) === 200) {
-            console.log(newResponse.status)
-            $("#shipping-cost").text(newResponse.content)
+        // 2. Récupération du prix de base (on s'assure que c'est un nombre exploitable)
+        const baseTotal = parseFloat("{{ total_items|default(0) }}");
 
-            const cardPrice = parseInt($('#card-price').text());
-            const shippingCost = parseInt($('#shipping-cost').text());
+        if (citySelect) {
+            citySelect.addEventListener('change', function() {
+                const cityId = this.value;
 
-            const total = cardPrice + shippingCost;
+                if (!cityId) {
+                    shippingDisplay.innerText = "0,00 €";
+                    updateTotal(0);
+                    return;
+                }
 
-            const formattedPrice = total.toFixed(2).replace('.', ','); // FORMAT
-            $('.total-price').text(formattedPrice + " €");
-            console.log(formattedPrice)
+                // 3. Appel Fetch
+                fetch('/order/get-shipping-cost/' + cityId)
+                    .then(response => {
+                        if (!response.ok) throw new Error('Erreur réseau');
+                        return response.json();
+                    })
+                    .then(data => {
+                        // On vérifie si la clé est 'cost' ou 'content' selon ton contrôleur
+                        const cost = parseFloat(data.cost || data.content || 0);
+                        
+                        // Affichage des frais
+                        shippingDisplay.innerText = cost.toLocaleString('fr-FR', { minimumFractionDigits: 2 }) + " €";
+                        
+                        // Calcul du total
+                        updateTotal(cost);
+                    })
+                    .catch(error => {
+                        console.error('Erreur logistique Alpha:', error);
+                        shippingDisplay.innerText = "Erreur";
+                    });
+            });
         }
-        },
-        error: function(xhr, status, error) {
 
+        function updateTotal(shippingCost) {
+            const finalTotal = baseTotal + shippingCost;
+            if (totalDisplay) {
+                totalDisplay.innerText = finalTotal.toLocaleString('fr-FR', { 
+                    minimumFractionDigits: 2, 
+                    maximumFractionDigits: 2 
+                }) + " €";
+            }
         }
-    })
-    }
-    citySelector.on('change', function() {
-        const urlUpdate = `/order/get-shipping-cost/${$(this).val()}`;
-        ajaxRequest(urlUpdate)
     });
-})
-
-
-</script>
-
+    </script>
+{% endblock %}
 {% endblock %}
