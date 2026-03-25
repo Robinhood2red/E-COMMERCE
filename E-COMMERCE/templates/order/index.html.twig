@@ -34,6 +34,18 @@
                         </div>
                     </div>
 
+                    {#! EMAIL #}
+                    {% if not app.user %}
+                        <div class="mb-3">
+                            <label class="text-secondary-alpha small text-uppercase ls-1">Email de contact</label>
+                            {{ form_widget(form.email, {'attr': {'class': 'form-control bg-transparent border-alpha text-white rounded-0', 'placeholder': 'votre@email.com'}}) }}
+                            <div class="form-text text-secondary-alpha italic small">* Nécessaire pour recevoir votre confirmation.</div>
+                        </div>
+                    {% else %}
+                        {# On dit à Symfony de ne pas l'afficher car on va le gérer côté Controller via l'User connecté #}
+                        {% do form.email.setRendered() %}
+                    {% endif %}
+
                     <div class="mb-3">
                         <label class="text-secondary-alpha small text-uppercase ls-1">Téléphone</label>
                         {{ form_widget(form.phone, {'attr': {'class': 'form-control bg-transparent border-alpha text-white rounded-0'}}) }}

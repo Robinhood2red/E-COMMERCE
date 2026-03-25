@@ -16,6 +16,9 @@ php bin/console make:crud 'NameEntity'
 VOIR TOUT MES DOCS
 php bin/console debug:router
 
+POUR UTILISER LE MAILER 
+php bin/console messenger:consume async -vv
+
 php -S localhost:8000 -t public
 
 Ma sous catégorie = alpha_camp

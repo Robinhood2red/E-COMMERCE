@@ -31,74 +31,85 @@ class OrderController extends AbstractController
     #[Route(name: 'app_order')]
     public function index(Request $request): Response
     {
-        // Récupération des données avec CartService
+        // Récupération des données du panier
         $fullCart = $this->cartService->getFullCart();
         $cartData = $fullCart['cart'];
         $total = $fullCart['total'];
 
-        // Calcul quantités
+        if (empty($cartData)) {
+            return $this->redirectToRoute('app_cart');
+        }
+
         $totalQuantity = 0;
         foreach ($cartData as $item) {
             $totalQuantity += $item['qte'];
         }
 
-        // Si vide --> Panier
-        if (empty($cartData)) {
-            return $this->redirectToRoute('app_cart');
+        // Préparation de l'entité et pré-remplissage si connecté
+        $order = new Order();
+        if ($this->getUser()) {
+            //* Pré-remplit l'email pour que l'objet soit complet
+            $order->setEmail($this->getUser()->getUserIdentifier());
+   
+            // $order->setFirstName($this->getUser()->getFirstName());
+            // $order->setLastName($this->getUser()->getLastName());
         }
 
-        // Préparation entity
-        $order = new Order();
         $form = $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             
-            // Vérification payOneDelivery est coché
             if ($order->isPayOnDelivery()) {
 
-                // Calcul des frais de port selon la city choisie
-                $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+                // Sécurité : On s'assure que l'email est bien là (Cas utilisateur connecté)
+                if ($this->getUser()) {
+                    $order->setEmail($this->getUser()->getUserIdentifier());
+                }
 
-                $order->setTotalPrice($total + $shipping); // Commande + fraits de livraison
-                $order->setCreatedAt(new \DateTimeImmutable()); // Ajout date de commande
+                // Calcul des totaux et date
+                $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+                $order->setTotalPrice($total + $shipping);
+                $order->setCreatedAt(new \DateTimeImmutable());
 
                 $this->entityManager->persist($order);
 
+                // Ajout des produits (Bien utiliser addOrderProduct pour Twig)
                 foreach ($cartData as $item) {
                     $orderProduct = new OrderProducts();
-                    $orderProduct->setOrder($order);
                     $orderProduct->setProduct($item['product']);
                     $orderProduct->setQte($item['qte']);
+
+                    $order->addOrderProduct($orderProduct); 
 
                     $this->entityManager->persist($orderProduct);
                 }
 
-                // Envoie en bdd
                 $this->entityManager->flush();
 
-                // Préparation du contenu HTML du mail
+                // Envoi de l'Email
                 $html = $this->renderView('mail/orderConfirm.html.twig', [
                     'order' => $order
                 ]);
 
-                // Création et configuration de l'e-mail
+                // User connecté PRIORITAIRE, sinon email du formulaire
+                $recipientEmail = $this->getUser() ? $this->getUser()->getUserIdentifier() : $order->getEmail();
+
                 $email = (new Email())
                     ->from('noreply@alpha-system.com')
-                    ->to('louisboutetcamille@gmail.com') //! Voir si possible d'envoyer au mail user connecté
+                    ->to($recipientEmail)
                     ->subject('Confirmation de votre commande Alpha COMMANDO #' . $order->getId())
                     ->html($html);
-                    $this->mailer->send($email); //* Envoi du mail
 
+                $this->mailer->send($email);
+
+                // Vidage panier
                 $request->getSession()->remove('cart');
                 $this->addFlash('success', 'Commande enregistrée et mail de confirmation envoyé.');
 
-                return $this->redirectToRoute('app_order_message', [
-                    'id' => $order->getId()
-                ]);
+                return $this->redirectToRoute('app_order_message', ['id' => $order->getId()]);
             } else {
                 $this->addFlash('warning', 'Veuillez cocher Paiement à la livraison.');
-
                 return $this->redirectToRoute('app_order');
             }
         }
