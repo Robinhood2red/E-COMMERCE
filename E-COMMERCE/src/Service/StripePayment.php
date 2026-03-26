@@ -3,7 +3,7 @@
 namespace App\Service;
 
 use Stripe\Stripe;
-use Stripe\Checkout\Session; // Import indispensable !
+use Stripe\Checkout\Session;
 
 class StripePayment
 {
@@ -56,8 +56,8 @@ class StripePayment
                 ], $products), // La virgule et la variable $products ferment le array_map
             ],
             'mode' => 'payment',
-            'cancel_url' => 'http://127.0.0.1:8000/pay/cancel',
-            'success_url' => 'http://127.0.0.1:8000/pay/success',
+            'cancel_url' => 'http://localhost:8000/pay/cancel/' . $orderId,
+            'success_url' => 'http://localhost:8000/pay/success/' . $orderId,
             'billing_address_collection' => 'required',
             'shipping_address_collection' => [
                 'allowed_countries' => ['FR', 'EG'],

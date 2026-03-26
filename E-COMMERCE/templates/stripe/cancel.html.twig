@@ -1,0 +1,15 @@
+{# templates/stripe/cancel.html.twig #}
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container py-5 text-center">
+    <div class="card bg-dark-alpha border-danger p-5 shadow-lg">
+        <i class="bi bi-x-circle-fill text-danger display-1 mb-4"></i>
+        <h1 class="text-uppercase fw-black italic text-white">Acquisition Interrompue</h1>
+        <p class="text-secondary-alpha">La transaction pour la commande #{{ order.id }} n'a pas pû avoir lieu</p>
+        <hr class="border-alpha">
+        <p class="text-white">Aucun prélèvement n'a été effectué. Vos données restent sécurisées.</p>
+        <a href="{{ path('app_home_page') }}" class="btn btn-alpha-action mt-4">Retour au Quartier Général</a>
+    </div>
+</div>
+{% endblock %}

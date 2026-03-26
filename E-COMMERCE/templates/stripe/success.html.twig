@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<div class="container py-5 text-center">
+    <div class="card bg-dark-alpha border-success p-5 shadow-lg">
+        <i class="bi bi-check-circle-fill text-success display-1 mb-4"></i>
+        <h1 class="text-uppercase fw-black italic text-white">Acquisition Confirmée</h1>
+        <p class="text-secondary-alpha">La commande #{{ order.id }} a été injectée dans notre système logistique.</p>
+        <hr class="border-alpha">
+        <p class="text-white">Un rapport de mission (email) vous a été envoyé à : <strong>{{ order.email }}</strong></p>
+        <a href="{{ path('app_home_page') }}" class="btn btn-alpha-action mt-4">Retour au Quartier Général</a>
+    </div>
+</div>
+{% endblock %}

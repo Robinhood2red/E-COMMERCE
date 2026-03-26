@@ -36,4 +36,13 @@ class Cart
             'total' => $total
         ];
     }
+
+    //! Fonction Clear 
+    public function clear(): void
+    {
+        $session = $this->requestStack->getSession(); // Récupère la session via le RequestStack dans __construct
+        
+        //* Supprime la clé 'cart'
+        $session->remove('cart');
+    }
 }

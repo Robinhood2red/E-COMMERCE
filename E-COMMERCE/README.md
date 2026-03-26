@@ -20,6 +20,7 @@ POUR UTILISER LE MAILER
 php bin/console messenger:consume async -vv
 
 php -S localhost:8000 -t public
+stripe listen --forward-to localhost:8000/stripe/notify
 
 Ma sous catégorie = alpha_camp
 
