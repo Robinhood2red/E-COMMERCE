@@ -62,8 +62,10 @@ class StripePayment
             'shipping_address_collection' => [
                 'allowed_countries' => ['FR', 'EG'],
             ],
-            'metadata' => [
-                'order_id' => $orderId, //! Décomenter quand le panier sera lié
+            'payment_intent_data' => [
+                'metadata' => [
+                    'orderId' => $orderId, //! Décomenter quand le panier sera lié
+                ]
             ]
         ]);
 

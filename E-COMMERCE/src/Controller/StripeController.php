@@ -55,7 +55,7 @@ class StripeController extends AbstractController
     }
 
     #[Route('/stripe/notify', name: 'app_stripe_notify')]
-    public function stripeNotify(Request $request, EntityManagerInterface $em): Response
+    public function stripeNotify(Request $request, ): Response
     {
         Stripe::setApiKey($_SERVER['STRIPE_SECRET_KEY']); // Clé API
 
@@ -85,7 +85,8 @@ class StripeController extends AbstractController
 
                 // Enregistrer les détails du paiement dans un fichier unique pour le debug
                 $fileName = 'stripe-detail-' . uniqid() . '.txt';
-                file_put_contents($fileName, $paymentIntent);
+                $orderId =$paymentIntent->metadata->orderId;
+                file_put_contents($fileName, $orderId);
                 break;
 
             case 'payment_method.attached': // Événement de méthode de paiement attachée

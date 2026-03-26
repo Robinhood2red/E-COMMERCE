@@ -1,0 +1,83 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Alpha System : Confirmation de Commande{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    {% include 'layouts/_flash_message.html.twig' %}
+
+    {# En-tête de succès #}
+    <div class="d-flex align-items-center gap-3 mb-5 border-bottom border-success pb-3">
+        <i class="bi bi-check-circle-fill text-success fs-1"></i>
+        <div>
+            <h1 class="display-6 fw-black text-uppercase italic mb-0">Commande Validé</h1>
+            <small class="text-success ls-2 uppercase">Acquisition terminée avec succès</small>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        {# Colonne de gauche : Détails de la commande #}
+        <div class="col-lg-8">
+            <div class="card bg-dark-alpha border-alpha rounded-0 p-4 shadow-lg mb-4">
+                <h4 class="text-white fw-black text-uppercase ls-1 mb-4 border-bottom border-secondary pb-2">
+                    <i class="bi bi-receipt text-primary-alpha me-2"></i>Récapitulatif de la commande n°{{ order.id }}
+                </h4>
+                
+                <div class="table-responsive">
+                    <table class="table table-dark table-borderless align-middle">
+                        <thead class="text-secondary-alpha small text-uppercase">
+                            <tr>
+                                <th>Désignation</th>
+                                <th class="text-center">Qte</th>
+                                <th class="text-end">Prix Unit.</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-white">
+                            {% for item in order.orderProducts %}
+                                <tr class="border-bottom border-secondary">
+                                    <td class="py-3">
+                                        <span class="fw-bold d-block">{{ item.product.name|upper }}</span>
+                                    </td>
+                                    <td class="py-3 text-center">{{ item.qte }}</td>
+                                    <td class="py-3 text-end text-primary-alpha">{{ item.product.price|number_format(2, ',', ' ') }} €</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 p-3 bg-black bg-opacity-50 border-start border-primary-alpha">
+                    <h5 class="text-white small text-uppercase mb-3 italic">Informations de livraison</h5>
+                    <p class="text-secondary-alpha mb-1"><strong class="text-white">Destinataire :</strong> {{ order.firstName }} {{ order.lastName }}</p>
+                    <p class="text-secondary-alpha mb-1"><strong class="text-white">Adresse :</strong> {{ order.address }}</p>
+                    <p class="text-secondary-alpha mb-0"><strong class="text-white">Zone :</strong> {{ order.city.name }} (+{{ order.city.shippingCost }} € de frais)</p>
+                </div>
+            </div>
+        </div>
+
+        {# Colonne de droite : Facturation finale #}
+        <div class="col-lg-4">
+            <div class="card bg-dark-alpha border-alpha rounded-0 p-4 shadow-lg text-center">
+                <span class="text-secondary-alpha small text-uppercase ls-2">Montant Total Prélevé</span>
+                <div class="display-5 fw-black text-primary-alpha my-3">
+                    {{ order.totalPrice|number_format(2, ',', ' ') }} €
+                </div>
+                <div class="badge bg-success rounded-0 text-uppercase p-2 mb-3">
+                    <i class="bi bi-cash-coin me-2"></i>Paiement à la livraison
+                </div>
+                <hr class="border-secondary">
+                <p class="small text-secondary-alpha italic">
+                    Un email de confirmation a été envoyé à votre centre de commandement. 
+                    Préparez le montant exact pour le transporteur Alpha.
+                </p>
+            </div>
+
+            <div class="mt-4">
+                <a href="{{ path('app_home_page') }}" class="btn btn-outline-alpha-white w-100 py-3 fw-bold text-uppercase rounded-0">
+                    Retour à l'accueil
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
