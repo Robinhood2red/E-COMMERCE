@@ -88,7 +88,7 @@ class StripeController extends AbstractController
                 $fileName = 'stripe-detail-' . uniqid() . '.txt';
                 $orderId =$paymentIntent->metadata->orderId;
                 $order = $or->find($orderId);
-                $order->setIsPaymentComplete(1);
+                $order->setIsPaymentCompleted(1);
                 $em->flush();
                 // file_put_contents($fileName, $orderId);
                 break;

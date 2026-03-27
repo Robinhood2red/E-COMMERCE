@@ -60,7 +60,7 @@
                             <li><a class="dropdown-item" href="{{ path('app_order') }}"><i class="bi bi-people me-2"></i>Coordonnées de livraisons</a></li>
                             <li><hr class="dropdown-divider border-alpha"></li>
                             <li class="dropdown-header text-secondary-alpha text-uppercase small">Suivis commandes</li>
-                            <li><a class="dropdown-item" href="{{ path('app_orders_show',{'type':'no_delivery'}) }}">Commandes non livrées</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_order_message_show',{'type':'no_delivery'}) }}">Commandes non livrées</a></li>
                         </ul>
                     </li>
                 {% endif %}

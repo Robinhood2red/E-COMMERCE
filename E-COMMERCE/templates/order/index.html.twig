@@ -79,12 +79,12 @@
                 <div class="d-flex justify-content-between mb-2">
                     
                     <span class="text-secondary-alpha">Articles :</span>
-                    {# <span class="text-white fw-bold">{{ totalQuantite }}</span> #}
+                    <span class="text-white fw-bold">{{ totalQte }}</span>
                 </div>
 
                  <div class="d-flex justify-content-between mb-2">
                     <span class="text-secondary-alpha">Montant commande :</span>
-                    {# <span id="card-price" class="text-white fw-bold">{{ total_items }} €</span> #}
+                    <span id="card-price" class="text-white fw-bold">{{ total }} €</span>
                 </div>
 
                 <div class="d-flex justify-content-between mb-3 border-bottom border-secondary pb-3">
@@ -96,7 +96,7 @@
                     <span class="text-white fw-black text-uppercase">Total estimé</span>
                     <span class="fs-4 fw-black text-primary-alpha total-price">
                         {# Calcul temporaire du total (avec de port) #}
-                        {# {{ total_items|number_format(2, ',', ' ') }} € #}
+                        {{ total|number_format(2, ',', ' ') }} € 
                         
                     </span>
                 </div>
@@ -131,7 +131,7 @@
         const totalDisplay = document.querySelector('.total-price'); // Plus précis avec ta classe
         
         // 2. Récupération du prix de base (on s'assure que c'est un nombre exploitable)
-        const baseTotal = parseFloat("{{ total_items|default(0) }}");
+        const baseTotal = parseFloat("{{ total|default(0) }}");
 
         if (citySelect) {
             citySelect.addEventListener('change', function() {

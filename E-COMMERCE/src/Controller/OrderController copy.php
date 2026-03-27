@@ -15,7 +15,6 @@ use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,95 +23,134 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[Route('/order')]
 class OrderController extends AbstractController
 {
-    public function __construct(
-        private readonly ProductRepository $productRepository, 
-        private readonly EntityManagerInterface $entityManager, 
-        private readonly Cart $cartService, 
-        private readonly MailerInterface $mailer
-    ) {}
+    //* Utilisation du constructeur pour injecter le repository, comme dans CartController
+    public function __construct(private readonly ProductRepository $productRepository, private readonly EntityManagerInterface $entityManager, private readonly Cart $cartService, private readonly MailerInterface $mailer)
+    {
+
+    }
     
     #[Route(name: 'app_order')]
-    public function index(Request $request, SessionInterface $session): Response 
+    public function index(Request $request): Response
     {
+        // Récupération des données du panier
         $data = $this->cartService->getFullCart();
         $cartData = $data['cart'];
-        $totalQuantity = 0;
-
-        foreach ($cartData as $item) {
-            $totalQuantity += $item['qte']; // On additionne les quantités de chaque produit
-        }
+        $total = $data['total'];
 
         if (empty($cartData)) {
             return $this->redirectToRoute('app_cart');
         }
 
+        $totalQuantity = 0;
+        foreach ($cartData as $item) {
+            $totalQuantity += $item['qte'];
+        }
+
+        // Préparation de l'entité et pré-remplissage si connecté
         $order = new Order();
         if ($this->getUser()) {
+            //* Pré-remplit l'email pour que l'objet soit complet
             $order->setEmail($this->getUser()->getUserIdentifier());
+   
+            // $order->setFirstName($this->getUser()->getFirstName());
+            // $order->setLastName($this->getUser()->getLastName());
         }
 
         $form = $this->createForm(OrderType::class, $order);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if (!empty($data['total'])) {
-                
-                $order->setTotalPrice($data['total']);
+            
+            if ($order->isPayOnDelivery()) {
+
+                // Sécurité : On s'assure que l'email est bien là (Cas utilisateur connecté)
+                if ($this->getUser()) {
+                    $order->setEmail($this->getUser()->getUserIdentifier());
+                }
+
+                // Calcul des totaux et date
+                $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+                $order->setTotalPrice($total + $shipping);
                 $order->setCreatedAt(new \DateTimeImmutable());
-                $order->setIsPaymentCompleted(0); // Initialise à false (0)
+
+                $order->setIsPaymentCompleted(0);
 
                 $this->entityManager->persist($order);
-                $this->entityManager->flush(); // Flush initial pour générer l'ID de commande
 
+                // Ajout des produits (Bien utiliser addOrderProduct pour Twig)
                 foreach ($cartData as $item) {
                     $orderProduct = new OrderProducts();
-                    $orderProduct->setOrder($order); // Lie le produit à la commande
                     $orderProduct->setProduct($item['product']);
                     $orderProduct->setQte($item['qte']);
 
+                    $order->addOrderProduct($orderProduct); 
+
                     $this->entityManager->persist($orderProduct);
                 }
+
                 $this->entityManager->flush();
 
-                if ($order->isPayOnDelivery()) {
-                    // Mise à jour du panier en session (Vidage)
-                    $session->set('cart', []);
+                // Envoi de l'Email
+                $html = $this->renderView('mail/orderConfirm.html.twig', [
+                    'order' => $order
+                ]);
 
-                    $html = $this->renderView('mail/orderConfirm.html.twig', [
-                        'order' => $order 
-                    ]);
+                // User connecté PRIORITAIRE, sinon email du formulaire
+                $recipientEmail = $this->getUser() ? $this->getUser()->getUserIdentifier() : $order->getEmail();
 
-                    $email = (new Email())
-                        ->from('sneakhub@gmail.com') // Comme dans la capture
-                        ->to($order->getEmail())
-                        ->subject('Confirmation de réception de commande')
-                        ->html($html);
+                $email = (new Email())
+                    ->from('noreply@alpha-system.com')
+                    ->to($recipientEmail)
+                    ->subject('Confirmation de votre commande Alpha COMMANDO #' . $order->getId())
+                    ->html($html);
 
-                    $this->mailer->send($email);
-            
-                    return $this->redirectToRoute('app_order_message', ['id' => $order->getId()]);
-                } else {
-                    $paymentStripe = new StripePayment();
-                    
-                    // On récupère les frais de port pour Stripe
-                    $shippingCost = $order->getCity()->getShippingCost();
-                    
-                    // Ajout du coût total recalculé avec frais de port si nécessaire
-                    $order->setTotalPrice($data['total'] + $shippingCost);
-                    $this->entityManager->flush();
+                $this->mailer->send($email);
 
-                    $paymentStripe->startPayment($data, $shippingCost, $order->getId());
-                    $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
+                // Vidage panier
+                $request->getSession()->remove('cart');
+                $this->addFlash('success', 'Commande enregistrée et mail de confirmation envoyé.');
 
-                    return $this->redirect($stripeRedirectUrl);
+                return $this->redirectToRoute('app_order_message', ['id' => $order->getId()]);
+            } else {
+
+                if ($this->getUser()) {
+                    $order->setEmail($this->getUser()->getUserIdentifier());
                 }
+
+                $shipping = $order->getCity() ? $order->getCity()->getShippingCost() : 0;
+                $order->setTotalPrice($total + $shipping);
+                $order->setCreatedAt(new \DateTimeImmutable());
+                $order->setPayOnDelivery(false); // On précise que ce n'est pas à la livraison
+
+                $this->entityManager->persist($order);
+
+                // Ajout des produits à la commande
+                foreach ($cartData as $item) {
+                    $orderProduct = new OrderProducts();
+                    $orderProduct->setProduct($item['product']);
+                    $orderProduct->setQte($item['qte']);
+                    $order->addOrderProduct($orderProduct); 
+                    $this->entityManager->persist($orderProduct);
+                }
+
+                $this->entityManager->flush();
+
+                $paymentStripe = new StripePayment(); // Initialisation du paiement Stripe
+                
+                $shippingCost = $order->getCity()->getShippingCost(); // On récupère les frais de port
+       
+                $paymentStripe->startPayment($data, $shippingCost, $order->getId()); // On lance le paiement en passant l'ID de la commande qu'on vient de créer
+
+                $stripeRedirectUrl = $paymentStripe->getStripeRedirectUrl();
+
+                return $this->redirect($stripeRedirectUrl);
             }
         }
 
         return $this->render('order/index.html.twig', [
             'form' => $form->createView(),
-            'total' => $data['total'], // Utilisé dans la capture
-            'totalQte' => $totalQuantity,
+            'total_items' => $total,
+            'totalQuantite' => $totalQuantity,
             'cart_data' => $cartData
         ]);
     }
