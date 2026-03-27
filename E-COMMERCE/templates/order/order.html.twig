@@ -15,22 +15,40 @@
     </div>
     {#! FILTRE PAR DATE #}
     <div class="bg-dark-alpha border-alpha p-3 mb-5">
-        <form method="get" class="row g-3 align-items-end">
-            <div class="col-md-4">
+        <form method="get" class="row g-3">
+            <div class="col-md-6">
                 <label for="filter_date" class="text-primary-alpha small uppercase ls-1 mb-2 d-block">Filtrer par date de protocole</label>
                 <input type="date" name="filter_date" id="filter_date" 
                     class="form-control bg-black border-secondary text-white rounded-0"
                     value="{{ currentDate }}">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-6 d-flex align-items-end">
                 <button type="submit" class="btn btn-outline-primary rounded-0 text-uppercase fw-bold italic w-100">
-                    <i class="bi bi-filter-left me-2"></i> Appliquer le filtre
+                    <i class="bi bi-filter-left me-2"></i> Appliquer le filtre de date
                 </button>
             </div>
-            <div class="col-md-2">
-                <a href="{{ path('app_order_message_show') }}" class="btn btn-outline-secondary rounded-0 text-uppercase small w-100">
-                    Réinitialiser
-                </a>
+
+            <div class="col-12 mt-4">
+                <div class="row g-2">
+                    <div class="col-md-4">
+                        <a href="{{ path('app_order_message_show', {'type': 'all'}) }}" 
+                        class="btn {{ currentType == 'all' ? 'btn-primary' : 'btn-outline-secondary' }} rounded-0 text-uppercase small w-100">
+                            <i class="bi bi-collection me-2"></i> Toutes les commandes
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ path('app_order_message_show', {'type': 'is-paid'}) }}" 
+                        class="btn {{ currentType == 'is-paid' ? 'btn-primary' : 'btn-outline-secondary' }} rounded-0 text-uppercase small w-100">
+                            <i class="bi bi-check-circle me-2"></i> Commandes Payées
+                        </a>
+                    </div>
+                    <div class="col-md-4">
+                        <a href="{{ path('app_order_message_show', {'type': 'no-delivery'}) }}" 
+                        class="btn {{ currentType == 'no-delivery' ? 'btn-primary' : 'btn-outline-secondary' }} rounded-0 text-uppercase small w-100">
+                            <i class="bi bi-clock me-2"></i> Non livrées
+                        </a>
+                    </div>
+                </div>
             </div>
         </form>
     </div>

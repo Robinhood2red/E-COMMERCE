@@ -16,6 +16,10 @@ final class HomePageController extends AbstractController
 {
 #[Route('/', name: 'app_home_page', methods: ['GET'])]
 public function index(ProductRepository $productRepository, CategorieRepository $categorieRepository,Request $request,PaginatorInterface $paginator): Response {
+        
+        // $search = $productRepository->searchEngine('Alpha');
+        // dd($search);
+
         // Récupère la requête sql ou les données brutes 
         $data = $productRepository->findBy([], ['id' => 'DESC']);
 

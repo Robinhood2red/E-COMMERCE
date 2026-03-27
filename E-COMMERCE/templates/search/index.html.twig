@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Résultats de recherche{% endblock %}
+
+{% block body %}
+<div class="container py-5">
+    <h1 class="display-4 fw-black tracking-tighter text-uppercase italic mb-2 text-center">
+        <span class="text-primary-alpha">RÉSULTATS</span> DE RECHERCHE
+    </h1>
+    {# On affiche le mot-clé si tu l'as passé au controller #}
+    <p class="text-center text-secondary-alpha mb-5 text-uppercase ls-1">
+        Pour : "<span class="text-white">{{ word|default('votre recherche') }}</span>"
+    </p>
+    
+    <div class="row g-4">
+        {% for product in products %}
+            <div class="col-12 col-sm-6 col-lg-3">
+                <div class="card h-100 bg-dark-alpha border-alpha rounded-0 overflow-hidden transform-alpha-hover position-relative">
+                    
+                    <div class="img-container position-relative">
+                        {# Utilisation du nom correct de l'image (product.images) #}
+                        <img src="{{ asset('/images/' ~ product.images) }}" class="card-img-top img-fluid rounded-0" alt="{{ product.name }}">
+                        <div class="card-overlay position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-dark-alpha border-alpha text-primary-alpha shadow-sm fw-black">CERTIFIÉ ALPHA α</span>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body d-flex flex-column text-center p-4">
+                        {# Titre #}
+                        <a href="{{ path('app_home_product_show', {'id': product.id}) }}" class="stretched-link text-decoration-none">
+                            <h2 class="h5 fw-black text-white text-uppercase tracking-wider mb-3">{{ product.name }}</h2>
+                        </a>
+
+                        {# Description : Utilisation de productDescription comme vu dans ton entité #}
+                        <p class="card-text small text-secondary-alpha mb-4" style="text-align: justify;">
+                            {{ product.productDescription|slice(0, 100) }}
+                        </p>
+                        
+                        {# BLOC BAS DE CARTE (Prix + Bouton) #}
+                        <div class="mt-auto">
+                            <h3 class="h4 fw-black text-primary-alpha mb-3 text-uppercase">
+                                {{ product.price }} €
+                            </h3>
+                            
+                            <div style="position: relative; z-index: 2;">
+                                <a href="{{ path('app_cart_add', {'id': product.id}) }}" class="btn btn-alpha-action w-100 rounded-0 py-2">
+                                    <i class="bi bi-cart-plus-fill me-2"></i>AJOUTER AU PANIER
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    {# Barre décorative Alpha #}
+                    <div class="alpha-loader"></div>
+                </div>
+            </div>
+        {% else %}
+            {# Ce bloc s'affiche SI la boucle for est vide #}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-exclamation-triangle text-primary-alpha display-1 mb-4"></i>
+                <h3 class="text-white text-uppercase fw-black">Aucun produit trouvé</h3>
+                <p class="text-secondary-alpha">Réessayez avec un autre mot-clé ou vérifiez l'orthographe.</p>
+                <a href="{{ path('app_home_page') }}" class="btn btn-outline-alpha mt-3">RETOUR À L'ACCUEIL</a>
+            </div>
+        {% endfor %}
+    </div>
+
+    {# La pagination est souvent inutile pour une petite recherche, mais on la laisse si tu l'utilises #}
+    {% if products.paginationData is defined %}
+        <div class="mt-5">
+            {{ knp_pagination_render(products, 'layouts/_pagination_template.html.twig') }}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

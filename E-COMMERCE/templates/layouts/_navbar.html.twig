@@ -60,15 +60,15 @@
                             <li><a class="dropdown-item" href="{{ path('app_order') }}"><i class="bi bi-people me-2"></i>Coordonnées de livraisons</a></li>
                             <li><hr class="dropdown-divider border-alpha"></li>
                             <li class="dropdown-header text-secondary-alpha text-uppercase small">Suivis commandes</li>
-                            <li><a class="dropdown-item" href="{{ path('app_order_message_show',{'type':'no_delivery'}) }}">Commandes non livrées</a></li>
+                            <li><a class="dropdown-item" href="{{ path('app_order_message_show', {'type': 'all'}) }}">Toutes les commandes</a></li>
                         </ul>
                     </li>
                 {% endif %}
             </ul>
 
-            <form class="d-flex me-lg-4" role="search">
+            <form class="d-flex me-lg-4" role="search" action="{{ path('app_search') }}" method="POST" data-turbo="false">
                 <div class="input-group border-alpha">
-                    <input class="form-control bg-transparent border-0 text-white small" type="search" placeholder="RECHERCHER..." aria-label="Search">
+                    <input class="form-control bg-transparent border-0 text-white small" type="search" name="word" placeholder="RECHERCHER..." aria-label="Search">
                     <button class="btn btn-outline-alpha border-0 text-primary-alpha" type="submit">
                         <i class="bi bi-search"></i>
                     </button>

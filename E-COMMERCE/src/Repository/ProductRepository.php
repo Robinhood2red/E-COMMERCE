@@ -16,28 +16,34 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    //    /**
-    //     * @return Product[] Returns an array of Product objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('p.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
+    /**
+     * Récupère les 10 premiers produits dont l'ID est strictement supérieur à une valeur donnée
+     * @param int $value L'ID de référence
+     * @return Product[]
+     */
+    public function findByIdUp(int $value): array
+    {
+        return $this->createQueryBuilder('p')
+            ->andWhere('p.id > :val')
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 
-    //    public function findOneBySomeField($value): ?Product
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * Recherche des produits par nom ou description (moteur de recherche)
+     * @param string $query Le mot-clé recherché
+     * @return Product[]
+     */
+    public function searchEngine(string $word): array
+    {
+        return $this->createQueryBuilder('p')
+            ->where('LOWER(p.name) LIKE :word')
+            ->orWhere('LOWER(p.product_description) LIKE :word')
+            ->setParameter('word', '%' . strtolower($word) . '%')
+            ->getQuery()
+            ->getResult();
+    }
 }

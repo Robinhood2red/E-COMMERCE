@@ -51,7 +51,7 @@ class StripePayment
                         'product_data' => [
                             'name' => $product['name'],
                         ],
-                        'unit_amount' => (int)$product['price'] * 100, // Force l'entier pour Stripe
+                        'unit_amount' => (int)round($product['price'] * 100), 
                     ],
                 ], $products), // La virgule et la variable $products ferment le array_map
             ],

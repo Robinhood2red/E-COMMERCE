@@ -56,8 +56,10 @@ class OrderController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             if (!empty($data['total'])) {
+
+                $totalPrice = $data['total'] + $order->getCity()->getShippingCost();
                 
-                $order->setTotalPrice($data['total']);
+                $order->setTotalPrice($totalPrice);
                 $order->setCreatedAt(new \DateTimeImmutable());
                 $order->setIsPaymentCompleted(0); // Initialise à false (0)
 
@@ -152,25 +154,37 @@ class OrderController extends AbstractController
        
     }
 
-    #[Route('/editor/show', name: 'app_order_message_show')]
+    #[Route('/editor/show/{type?all}', name: 'app_order_message_show')]
     #[IsGranted('ROLE_EDITOR')]
-    public function getAllOrder(OrderRepository $orderRepository, PaginatorInterface $paginator, Request $request): Response
+    public function getAllOrder(string $type, OrderRepository $orderRepository, PaginatorInterface $paginator, Request $request): Response
     {
-        // Préparation filtre par date
         $filterDate = $request->query->get('filter_date');
 
-        // QueryBuilder
         $queryBuilder = $orderRepository->createQueryBuilder('o')
             ->orderBy('o.id', 'DESC');
 
-        // Si une date est demandée, alors filtre
+        // --- LOGIQUE DE FILTRAGE PAR TYPE
+        if ($type === 'is-completed') {
+            // Filtre les commandes marquées comme livrées/terminées
+            $queryBuilder->andWhere('o.isCompleted = :completed')
+                        ->setParameter('completed', 1);
+        } elseif ($type === 'is-paid') {
+            // Filtre les commandes payées via Stripe
+            $queryBuilder->andWhere('o.isPaymentCompleted = :paid')
+                        ->setParameter('paid', 1);
+        } elseif ($type === 'no-delivery') { 
+            // On cherche les commandes où isCompleted est soit NULL, soit 0
+            $queryBuilder->andWhere('o.isCompleted IS NULL OR o.isCompleted = :notCompleted')
+                        ->setParameter('notCompleted', 0);
+        }
+        // --- FILTRE PAR DATE EXISTANT ---
         if ($filterDate) {
             $date = new \DateTime($filterDate);
             
-            $queryBuilder->andWhere('o.createdAt >= :start') // condition WHERE
-                        ->andWhere('o.createdAt <= :end') // start et end sont des placeholders
-                        ->setParameter('start', $date->format('Y-m-d 00:00:00')) //* J'ai enlevé les heures sur le twig
-                        ->setParameter('end', $date->format('Y-m-d 23:59:59')); //* 23h à minuit pour englober la journée entière
+            $queryBuilder->andWhere('o.createdAt >= :start')
+                        ->andWhere('o.createdAt <= :end')
+                        ->setParameter('start', $date->format('Y-m-d 00:00:00'))
+                        ->setParameter('end', $date->format('Y-m-d 23:59:59'));
         }
 
         $query = $queryBuilder->getQuery();
@@ -183,13 +197,14 @@ class OrderController extends AbstractController
 
         return $this->render('order/order.html.twig', [
             'orders' => $orders,
-            'currentDate' => $filterDate
+            'currentDate' => $filterDate,
+            'currentType' => $type // Utile pour garder l'onglet actif dans ton Twig
         ]); 
     }
 
     #[Route('/editor/is-completed/update/{id}', name: 'app_order_is-completed-update', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_EDITOR')]
-    public function isColpletedUpdate($id, OrderRepository $orderRepository, EntityManagerInterface $entityManager): Response
+    public function isColpletedUpdate(Request $request, $id, OrderRepository $orderRepository, EntityManagerInterface $entityManager): Response
     {
 
         $order = $orderRepository->find($id);
@@ -198,7 +213,8 @@ class OrderController extends AbstractController
 
         $this->addFlash('success', 'Modification effectuée !');
 
-        return $this->redirectToRoute('app_order_message_show');
+        // return $this->redirectToRoute('app_order_message_show');
+        return $this->redirect($request->headers->get('referer'));
     }
 
 
