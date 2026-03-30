@@ -27,7 +27,7 @@ class ProductRepository extends ServiceEntityRepository
             ->andWhere('p.id > :val')
             ->setParameter('val', $value)
             ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
+            ->setMaxResults(12)
             ->getQuery()
             ->getResult();
     }
