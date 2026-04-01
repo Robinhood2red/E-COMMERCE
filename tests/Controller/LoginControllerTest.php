@@ -1,74 +1,84 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace App\Tests;
 
 use App\Entity\User;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class SecurityControllerTest extends WebTestCase
+class LoginControllerTest extends WebTestCase
 {
+    private KernelBrowser $client;
+
     protected function setUp(): void
     {
+        $this->client = static::createClient();
         $container = static::getContainer();
         $em = $container->get('doctrine.orm.entity_manager');
         $userRepository = $em->getRepository(User::class);
 
+        // Remove any existing users from the test database
         foreach ($userRepository->findAll() as $user) {
             $em->remove($user);
         }
+
         $em->flush();
-    }
 
-    private function createTestUser(): User
-    {
-        $container = static::getContainer();
-        $em = $container->get('doctrine.orm.entity_manager');
-
+        // Create a User fixture
         /** @var UserPasswordHasherInterface $passwordHasher */
         $passwordHasher = $container->get('security.user_password_hasher');
 
-        $user = (new User())->setEmail('test@test.com');
+        $user = (new User())->setEmail('email@example.com');
         $user->setPassword($passwordHasher->hashPassword($user, 'password'));
-        $user->setLastname('Test');
-        $user->setFirstname('User');
+        $user->setLastname('Norris');
+        $user->setFirstname('Chuck');
+
         $em->persist($user);
         $em->flush();
-
-        return $user;
     }
 
-    public function testLoginPageLoadsForAnonymousUser(): void
+    public function testLogin(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/login');
+        // Denied - Can't login with invalid email address.
+        $this->client->request('GET', '/login');
+        self::assertResponseIsSuccessful();
 
-        $this->assertResponseIsSuccessful();
-        $this->assertSelectorExists('form.loginForm');
-        $this->assertSelectorExists('input[name="_username"]');
-        $this->assertSelectorExists('input[name="_password"]');
-        $this->assertSelectorTextContains('h1', 'Connexion');
-    }
+        $this->client->submitForm('Connexion', [
+            '_username' => 'doesNotExist@example.com',
+            '_password' => 'password',
+        ]);
 
-    public function testLoginRedirectsIfAlreadyAuthenticated(): void
-    {
-        $client = static::createClient();
-        $user = $this->createTestUser();
+        self::assertResponseRedirects('/login');
+        $this->client->followRedirect();
 
-        $client->loginUser($user);
-        $client->request('GET', '/login');
+        // Ensure we do not reveal if the user exists or not.
+        self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
 
-        $this->assertResponseRedirects();
-    }
+        // Denied - Can't login with invalid password.
+        $this->client->request('GET', '/login');
+        self::assertResponseIsSuccessful();
 
-    public function testLogoutWorks(): void
-    {
-        $client = static::createClient();
-        $user = $this->createTestUser();
+        $this->client->submitForm('Connexion', [
+            '_username' => 'email@example.com',
+            '_password' => 'bad-password',
+        ]);
 
-        $client->loginUser($user);
-        $client->request('GET', '/logout');
+        self::assertResponseRedirects('/login');
+        $this->client->followRedirect();
 
-        $this->assertResponseRedirects();
+        // Ensure we do not reveal the user exists but the password is wrong.
+        self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
+
+        // Success - Login with valid credentials is allowed.
+        $this->client->submitForm('Connexion', [
+            '_username' => 'email@example.com',
+            '_password' => 'password',
+        ]);
+
+        self::assertResponseRedirects('/');
+        $this->client->followRedirect();
+
+        self::assertSelectorNotExists('.alert-danger');
     }
 }
