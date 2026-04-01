@@ -76,6 +76,8 @@ class LoginControllerTest extends WebTestCase
             '_password' => 'password',
         ]);
 
+        dump($this->client->getCrawler()->filter('.alert-danger')->text());
+
         self::assertResponseRedirects('/');
         $this->client->followRedirect();
 
