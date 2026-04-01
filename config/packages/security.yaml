@@ -61,3 +61,5 @@ when@test:
         firewalls:
             main:
                 provider: app_user_provider_test  # ← AJOUT  
+                form_login:
+                    enable_csrf: false
