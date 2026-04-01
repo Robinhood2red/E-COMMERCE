@@ -9,7 +9,7 @@ final class HomePageControllerTest extends WebTestCase
     public function testIndex(): void
     {
         $client = static::createClient();
-        $client->request('GET', '/home/page');
+        $client->request('GET', '/');
 
         self::assertResponseIsSuccessful();
     }
