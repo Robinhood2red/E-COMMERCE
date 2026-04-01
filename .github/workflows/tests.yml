@@ -48,9 +48,7 @@ jobs:
       run: composer install --prefer-dist --no-progress
 
     - name: Create test database
-      run: |
-        php bin/console doctrine:database:create --env=test --no-interaction
-        php bin/console doctrine:schema:create --env=test --no-interaction
+      run: php bin/console doctrine:schema:create --env=test --no-interaction
 
     # 5. Exécution des tests unitaires et fonctionnels
     # Lance PHPUnit pour vérifier que le code fonctionne comme prévu
