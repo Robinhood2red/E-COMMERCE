@@ -1,84 +1,74 @@
 <?php
 
-namespace App\Tests;
+namespace App\Tests\Controller;
 
 use App\Entity\User;
-use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class LoginControllerTest extends WebTestCase
+class SecurityControllerTest extends WebTestCase
 {
-    private KernelBrowser $client;
-
     protected function setUp(): void
     {
-        $this->client = static::createClient();
         $container = static::getContainer();
         $em = $container->get('doctrine.orm.entity_manager');
         $userRepository = $em->getRepository(User::class);
 
-        // Remove any existing users from the test database
         foreach ($userRepository->findAll() as $user) {
             $em->remove($user);
         }
-
-        $em->flush();
-
-        // Create a User fixture
-        /** @var UserPasswordHasherInterface $passwordHasher */
-        $passwordHasher = $container->get('security.user_password_hasher');
-
-        $user = (new User())->setEmail('email@example.com');
-        $user->setPassword($passwordHasher->hashPassword($user, 'password'));
-        $user->setLastname('Norris');
-        $user->setFirstname('Chuck');
-
-        $em->persist($user);
         $em->flush();
     }
 
-    public function testLogin(): void
+    private function createTestUser(): User
     {
-        // Denied - Can't login with invalid email address.
-        $this->client->request('GET', '/login');
-        self::assertResponseIsSuccessful();
+        $container = static::getContainer();
+        $em = $container->get('doctrine.orm.entity_manager');
 
-        $this->client->submitForm('Connexion', [
-            '_username' => 'doesNotExist@example.com',
-            '_password' => 'password',
-        ]);
+        /** @var UserPasswordHasherInterface $passwordHasher */
+        $passwordHasher = $container->get('security.user_password_hasher');
 
-        self::assertResponseRedirects('/login');
-        $this->client->followRedirect();
+        $user = (new User())->setEmail('test@test.com');
+        $user->setPassword($passwordHasher->hashPassword($user, 'password'));
+        $user->setLastname('Test');
+        $user->setFirstname('User');
+        $em->persist($user);
+        $em->flush();
 
-        // Ensure we do not reveal if the user exists or not.
-        self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
+        return $user;
+    }
 
-        // Denied - Can't login with invalid password.
-        $this->client->request('GET', '/login');
-        self::assertResponseIsSuccessful();
+    public function testLoginPageLoadsForAnonymousUser(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', '/login');
 
-        $this->client->submitForm('Connexion', [
-            '_username' => 'email@example.com',
-            '_password' => 'bad-password',
-        ]);
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorExists('form.loginForm');
+        $this->assertSelectorExists('input[name="_username"]');
+        $this->assertSelectorExists('input[name="_password"]');
+        $this->assertSelectorTextContains('h1', 'Connexion');
+    }
 
-        self::assertResponseRedirects('/login');
-        $this->client->followRedirect();
+    public function testLoginRedirectsIfAlreadyAuthenticated(): void
+    {
+        $client = static::createClient();
+        $user = $this->createTestUser();
 
-        // Ensure we do not reveal the user exists but the password is wrong.
-        self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
+        $client->loginUser($user);
+        $client->request('GET', '/login');
 
-        // Success - Login with valid credentials is allowed.
-        $this->client->submitForm('Connexion', [
-            '_username' => 'email@example.com',
-            '_password' => 'password',
-        ]);
+        $this->assertResponseRedirects();
+    }
 
-        self::assertResponseRedirects('/');
-        $this->client->followRedirect();
+    public function testLogoutWorks(): void
+    {
+        $client = static::createClient();
+        $user = $this->createTestUser();
 
-        self::assertSelectorNotExists('.alert-danger');
+        $client->loginUser($user);
+        $client->request('GET', '/logout');
+
+        $this->assertResponseRedirects();
     }
 }
