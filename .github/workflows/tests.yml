@@ -55,6 +55,6 @@ jobs:
     - name: Run PHPUnit tests
       run: |
         # Lance les tests avec un affichage détaillé et en couleur
-        php bin/phpunit --colors=always -v
+        php bin/phpunit --colors=always --debug
         # Affiche un résumé de la couverture de code dans la console
         php bin/phpunit --coverage-text
