@@ -42,4 +42,38 @@ class SecurityControllerTest extends WebTestCase
         //sur la page qui contient le texte "Connexion"
         $this->assertSelectorTextContains('h1', 'Connexion');
     }
+
+    public function testLoginRedirectsIfAlreadyAuthenticated(): void
+    {
+        //* 1. Crée un client HTTP simulé pour interagir avec l'application.
+        $client = static::createClient();
+
+        //* 2. Accède au conteneur de services du kernel de test.
+        $container = static::getContainer();
+
+        //* 3. Récupère le service qui gère la récupération
+        // des utilisateurs (User Provider).
+        // L'alias 'app_user_provider_test' est spécifique à l'environnement de test et doit être configuré
+        // pour récupérer les utilisateurs nécessaires au test 
+        //(souvent à partir d'une fixture ou d'un service mocké).
+        $userProvider = $container->get('security.user.provider.concrete.app_user_provider_test');
+
+        //* 4. Charge l'objet utilisateur réel (l'entité User) en utilisant un identifiant
+        //(ici, l'email 'test@test.com').
+        $user = $userProvider->loadUserByIdentifier('test@test.com');
+
+        //* 5. Simule la connexion de cet objet utilisateur au client HTTP.
+        // À partir de ce point, le client est considéré comme authentifié par Symfony.
+        $client->loginUser($user);
+
+        // --- Exécution de la Requête ---
+        //* 6. Effectue une requête GET vers l'URL '/login' alors que le client est connecté.
+        $client->request('GET', '/login');
+        
+        // --- Assertion ---
+        //* 7. Assertion : Vérifie que la réponse du serveur est une redirection (code HTTP 3xx).
+        // C'est le comportement attendu : un utilisateur déjà connecté ne doit pas voir la page de connexion,
+        // mais doit être renvoyé vers une autre route.
+        $this->assertResponseRedirects();
+    }
 }
