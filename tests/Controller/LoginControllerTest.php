@@ -25,9 +25,10 @@ class LoginControllerTest extends WebTestCase
 
         /** @var UserPasswordHasherInterface $passwordHasher */
         $passwordHasher = $container->get('security.user_password_hasher');
-
+        $user->setPassword('password');
         $user = (new User())->setEmail('email@example.com');
-        $user->setPassword($passwordHasher->hashPassword($user, 'password'));
+        // $user->setPassword($passwordHasher->hashPassword($user, 'password'));
+
         $user->setLastname('Norris');
         $user->setFirstname('Chuck');
 
