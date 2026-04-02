@@ -65,3 +65,9 @@ jobs:
       env:
         APP_SECRET: testsecret
       run: php bin/phpunit --colors=always
+
+    - name: Cache Composer
+      uses: actions/cache@v4
+      with:
+        path: vendor
+        key: composer-${{ hashFiles('**/composer.lock') }}-v2
