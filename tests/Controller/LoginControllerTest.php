@@ -18,14 +18,11 @@ class LoginControllerTest extends WebTestCase
         $em = $container->get('doctrine.orm.entity_manager');
         $userRepository = $em->getRepository(User::class);
 
-        // Remove any existing users from the test database
         foreach ($userRepository->findAll() as $user) {
             $em->remove($user);
         }
-
         $em->flush();
 
-        // Create a User fixture
         /** @var UserPasswordHasherInterface $passwordHasher */
         $passwordHasher = $container->get('security.user_password_hasher');
 
@@ -45,14 +42,12 @@ class LoginControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         $this->client->submitForm('Connexion', [
-            '_username' => 'email@example.com',
+            '_username' => 'doesNotExist@example.com', // ← email invalide
             '_password' => 'password',
         ]);
 
         self::assertResponseRedirects('/login');
         $this->client->followRedirect();
-
-        // Ensure we do not reveal if the user exists or not.
         self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
 
         // Denied - Can't login with invalid password.
@@ -66,11 +61,12 @@ class LoginControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/login');
         $this->client->followRedirect();
-
-        // Ensure we do not reveal the user exists but the password is wrong.
         self::assertSelectorTextContains('.alert-danger', 'Invalid credentials.');
 
         // Success - Login with valid credentials is allowed.
+        $this->client->request('GET', '/login'); // ← nouveau GET pour fresh CSRF token
+        self::assertResponseIsSuccessful();
+
         $this->client->submitForm('Connexion', [
             '_username' => 'email@example.com',
             '_password' => 'password',
@@ -78,9 +74,6 @@ class LoginControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/');
         $this->client->followRedirect();
-
-        fwrite(STDERR, $this->client->getResponse()->getContent());
-
         self::assertSelectorNotExists('.alert-danger');
     }
 }
