@@ -47,13 +47,21 @@ jobs:
       # --prefer-dist accélère le téléchargement, --no-progress réduit le bruit dans les logs
       run: composer install --prefer-dist --no-progress
 
+    # - name: Create test database
+    #   run: php bin/console doctrine:schema:create --env=test --no-interaction
+
+    # # 5. Exécution des tests unitaires et fonctionnels
+    # # Lance PHPUnit pour vérifier que le code fonctionne comme prévu
+    # - name: Run PHPUnit tests
+    #   run: |
+    #     # Lance les tests avec un affichage détaillé et en couleur
+    #     php bin/phpunit --colors=always 
     - name: Create test database
+      env:
+        APP_SECRET: testsecret
       run: php bin/console doctrine:schema:create --env=test --no-interaction
 
-    # 5. Exécution des tests unitaires et fonctionnels
-    # Lance PHPUnit pour vérifier que le code fonctionne comme prévu
     - name: Run PHPUnit tests
-      run: |
-        # Lance les tests avec un affichage détaillé et en couleur
-        php bin/phpunit --colors=always 
-
+      env:
+        APP_SECRET: testsecret
+      run: php bin/phpunit --colors=always
