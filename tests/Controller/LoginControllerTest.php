@@ -45,7 +45,7 @@ class LoginControllerTest extends WebTestCase
         self::assertResponseIsSuccessful();
 
         $this->client->submitForm('Connexion', [
-            '_username' => 'doesNotExist@example.com',
+            '_username' => 'email@example.com',
             '_password' => 'password',
         ]);
 
@@ -78,6 +78,8 @@ class LoginControllerTest extends WebTestCase
 
         self::assertResponseRedirects('/');
         $this->client->followRedirect();
+
+        fwrite(STDERR, $this->client->getResponse()->getContent());
 
         self::assertSelectorNotExists('.alert-danger');
     }
